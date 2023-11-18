@@ -1,4 +1,30 @@
 #include "account.h"
+// #include <mysql_driver.h>
+// #include <mysql_connection.h>
+
+// sql::mysql::MySQL_Driver *driver;
+// sql::Connection *con;
+// // connect to server
+// driver = sql::mysql::get_mysql_driver_instance();
+// con = driver->connect("tcp://127.0.0.1:3306", "username", "password");
+// con->setSchema("database");
+
+// // query
+// sql::Statement *stmt;
+// stmt = con->createStatement();
+// stmt->execute("CREATE TABLE example (id INT, name VARCHAR(50))");
+// delete stmt;
+
+// // handle result
+// sql::ResultSet *res;
+// res = stmt->executeQuery("SELECT * FROM example");
+// while (res->next()) {
+//     std::cout << "ID: " << res->getInt("id") << ", Name: " << res->getString("name") << std::endl;
+// }
+// delete res;
+
+// delete con;
+
 
 Account::Account(){
 }
@@ -30,6 +56,11 @@ Account::Status Account::attempLogin(std::string username, std::string password)
 
   status = logged_in;
   return status;
+}
+
+Account::Status Account::attempSignup(std::string username, std::string password){
+  
+
 }
 
 Account::Status Account::loginFailed(){

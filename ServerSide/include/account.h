@@ -13,6 +13,7 @@ public:
   std::string getName() { return name; };
 
   Status attempLogin(std::string username, std::string password);
+  Status attempSignup(std::string username, std::string password);
   static std::string Stringify(Status status){
     switch (status)
     {

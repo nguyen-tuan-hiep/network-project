@@ -1,0 +1,1 @@
+MySQL Connector: https://dev.mysql.com/downloads/file/?id=523480

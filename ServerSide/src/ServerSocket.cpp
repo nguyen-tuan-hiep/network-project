@@ -259,6 +259,31 @@ void ServerSocket::handleLoginSignal(int client_socket, std::stringstream& ss){
   send(client_socket, message.c_str(), RECEIVE_BUFFER_SIZE, 0);
 }
 
+void ServerSocket::handleSignupSignal(int client_socket, std::stringstream& ss){
+  std::string username, password, token, code, message;
+  
+  std::getline(ss, token, '\n');
+  std::cout << token << '\n';
+  username = token;
+  std::getline(ss, token, '\n');
+  std::cout << token << '\n';
+  password = token;
+  //Find account logic here
+  Account::Status status;
+  std::string name;
+  std::string statusMessage;
+  for (auto& account : accountList) {
+    status = account.second.attempLogin(username, password);
+    if (status != Account::Status::logged_out){
+      name = account.second.getName();
+      break;
+    }
+  }
+  code.assign(LOGIN_CODE);
+  message = code + '\n' + Account::Stringify(status) + '\n' + name + '\n';
+  send(client_socket, message.c_str(), RECEIVE_BUFFER_SIZE, 0);
+}
+
 void ServerSocket::handleReadySignal(int client_socket, std::stringstream& ss, int& roomIndex){
   std::string token, code, message;
 

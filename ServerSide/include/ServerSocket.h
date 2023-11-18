@@ -26,6 +26,7 @@ class Account;
 #define READY_CODE "READY"
 #define RESIGN_CODE "RESIGN"
 #define LOGIN_CODE "LOGIN"
+#define SIGNUP_CODE "SIGNUP"
 
 class ServerSocket{
 public:
@@ -47,6 +48,7 @@ private:
   void handleReadySignal(int client_socket, std::stringstream& ss, int& roomIndex);
   void handleResignSignal(int client_socket, std::stringstream& ss, int& roomIndex, std::thread::id& threadId);
   void handleRoomStatus(int client_socket, int& roomIndex, std::thread::id& threadId);
+  void handleSignupSignal(int client_socket, std::stringstream& ss);
 
   SOCKET server_so;
   Room roomList[MAX_CLIENT];
