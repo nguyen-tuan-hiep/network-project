@@ -344,3 +344,92 @@ bool Server::Processinfo(int ID)
 	cJSON_Delete(json);
 	return true;
 }
+
+bool Server::CreateGameList(string & _string)
+{
+	cJSON *json = cJSON_CreateObject();
+	if (cJSON_AddStringToObject(json, "Type", "List_of_Rooms") == NULL)
+	{
+		cout << "type add failed." << endl;
+		cJSON_Delete(json);
+		return false;
+	}
+	cJSON * Lists = NULL;
+	Lists = cJSON_AddArrayToObject(json, "List");
+	if (Lists == NULL)
+	{
+		cout << "List add failed." << endl;
+		cJSON_Delete(json);
+		return false;
+	}
+	//if (GameList.size() == 0)
+	//{
+	//	_string = "NULL";
+	//	return true;
+	//}
+	unordered_map<int, onlineGame>::iterator it;
+	for (it = GameList.begin(); it != GameList.end(); ++it)
+	{
+		cJSON *GAME = cJSON_CreateObject();
+
+		if (cJSON_AddStringToObject(GAME, "name", it->second->hostName.c_str()) == NULL)
+		{
+			cJSON_Delete(json);
+			return false;
+		}
+		if (cJSON_AddNumberToObject(GAME, "id", it->second->id) == NULL)
+		{
+			cJSON_Delete(json);
+			return false;
+		}
+		if (cJSON_AddNumberToObject(GAME, "isplay", it->second->isplay) == NULL)
+		{
+			cJSON_Delete(json);
+			return false;
+		}
+		string p2name;
+		if (it->second->isplay)
+			p2name = it->second->p2Name;
+		else
+			p2name = "";
+		if (cJSON_AddStringToObject(GAME, "p2name", p2name.c_str()) == NULL)
+		{
+			cJSON_Delete(json);
+			return false;
+		}
+		cJSON_AddItemToArray(Lists, GAME);
+	}
+
+	_string = cJSON_Print(json);
+	cJSON_Delete(json);
+	return true;;
+}
+
+bool Server::sendSystemInfo(int ID, string InfoType)
+{
+	cJSON *json = cJSON_CreateObject();
+	cJSON_AddStringToObject(json, "Type", "System");
+	cJSON_AddStringToObject(json, "System_Info", InfoType.c_str());
+	char *JsonToSend = cJSON_Print(json);
+	cJSON_Delete(json);
+	cout << "send:" << endl << JsonToSend << " To: " << ID << endl;
+	string Send(JsonToSend);
+	return SendString(ID, Send);
+}
+
+bool Server::sendGameList(int ID)
+{
+	string Message;
+	if (!CreateGameList(Message))
+	{
+		cout << "create game list JSON failed!" << endl;
+		return false;
+	}
+	if (Message == "NULL")
+		return true;
+	if (ID < 0)
+		sendMessToClients(Message);
+	else
+		SendString(ID, Message);
+	return true;
+}
