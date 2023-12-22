@@ -433,3 +433,30 @@ bool Server::sendGameList(int ID)
 		SendString(ID, Message);
 	return true;
 }
+
+void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connections array
+{
+	while (true)
+	{
+		if (!serverptr->Processinfo(ID))
+			break;
+	}
+	cout << "Lost connection to client ID: " << ID << endl;
+    close(serverptr->Connections[ID]);
+	if (serverptr->PlayerList[ID]->AreYouInGame() >= 0)
+	{
+		cout << "delete its game room: " <<  endl;
+		int HID = serverptr->PlayerList[ID]->AreYouInGame();
+		int anotherPlayer = serverptr->GameList[HID]->anotherPlayerID(ID);
+		if (anotherPlayer >= 0 && serverptr->PlayerList[anotherPlayer])
+		{
+			serverptr->sendSystemInfo(anotherPlayer, "LostConnection");
+			serverptr->PlayerList[anotherPlayer]->returnToLobby();
+		}
+		serverptr->GameList.erase(HID);
+		serverptr->sendGameList(-1);
+	}
+	serverptr->PlayerList.erase(ID);
+    serverptr->Connections.erase(ID);
+    serverptr->TotalConnections -= 1;
+}
