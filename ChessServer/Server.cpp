@@ -14,7 +14,7 @@ Server::Server(int PORT, bool BroadcastPublically) //Port = port to broadcast on
         servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Broadcast locally
 
     sListen = socket(AF_INET, SOCK_STREAM, 0); //Create socket to listen for new connections
-    if ((bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
+    if ((::bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
 	{
         string ErrorMsg = "Failed to bind the address to our listening socket.";
         std::cout << ErrorMsg << std::endl;
@@ -175,7 +175,7 @@ bool Server::Processinfo(int ID)
                     std::cout << "Failed to open file for writing\n";
                 else {
                     QTextStream out(&file);
-                    out << reg_ID << endl << reg_PW << endl;
+                    out << reg_ID << Qt::endl << reg_PW << Qt::endl;
                     file.close();
                 }
             }
@@ -199,6 +199,7 @@ bool Server::Processinfo(int ID)
                 string MOTD = "MOTD: Welcome! This is the message of the day!.";
                 SendString(ID, MOTD);
                 sendGameList(ID);
+                OnlineUserList[ID] = user_ID;
             }
             else
                 sendSystemInfo(ID, "LogIn_FAILED");
@@ -337,6 +338,20 @@ bool Server::Processinfo(int ID)
 			else
 				PlayerList[ID]->returnToLobby();
 		}
+        else if (type == "GetOnlineUsers")
+        {
+            string res = "";
+            for(auto e : OnlineUserList)
+                res += (e.second.toStdString() + ",");
+            cJSON *json = cJSON_CreateObject();
+            cJSON_AddStringToObject(json, "Type", "OnlineUsersList");
+            cJSON_AddStringToObject(json, "Response", res.c_str());
+            char *JsonToSend = cJSON_Print(json);
+            cJSON_Delete(json);
+            cout << "send:" << endl << JsonToSend << " To: " << ID << endl;
+            string Send(JsonToSend);
+            SendString(ID, Send);
+        }
 		else if (type == "Exit")
 			return false;
 	}
@@ -434,6 +449,7 @@ bool Server::sendGameList(int ID)
 	return true;
 }
 
+
 void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connections array
 {
 	while (true)
@@ -443,6 +459,7 @@ void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connecti
 	}
 	cout << "Lost connection to client ID: " << ID << endl;
     close(serverptr->Connections[ID]);
+    OnlineUserList.erase(ID);
 	if (serverptr->PlayerList[ID]->AreYouInGame() >= 0)
 	{
 		cout << "delete its game room: " <<  endl;
