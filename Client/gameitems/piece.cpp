@@ -118,7 +118,7 @@ bool Piece::pawnAttack(int x, int y)
 
 QString Piece::moveTo(int x, int y)
 {
-    QString res = pieName[getType()-4]+": "+('A'+location[0])+QString::number(8 - location[1])+" -> ";
+    QString res = pieName[getType()-4]+": "+QChar('A'+location[0])+QString::number(8 - location[1])+" -> ";
     int xPos, yPos;
     if(this->getCurrentBox()->getboard()->playerSside())
     {
@@ -133,7 +133,7 @@ QString Piece::moveTo(int x, int y)
     boardbox *targetBox = this->getCurrentBox()->getboard()->getbox(x,y);
     this->setPos(xPos,yPos);
     this->setlocation(x,y);
-    res += (('A'+x)+QString::number(8-y));
+    res += (QChar('A'+x)+QString::number(8-y));
     this->moved();
     this->getCurrentBox()->removepiece();
     this->setCurrentBox(targetBox);
