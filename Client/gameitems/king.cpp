@@ -37,7 +37,7 @@ bool king::canmove(int x, int y)
             if(this->getCurrentBox()->getboard()->getbox(i,y)->hasPiece())
                 return false;
         }
-        isrook -> moveTo(x-pace, y);
+        isrook -> moveTo(x-pace, y, false);
         return true; // uhhhhh, forget to make this outside, fuck.
     }
     else
@@ -46,7 +46,7 @@ bool king::canmove(int x, int y)
 
 int king::die()
 {
-    this->Piece::die();
+    this->Piece::die(false);
     return side;
 }
 

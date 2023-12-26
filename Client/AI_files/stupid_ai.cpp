@@ -55,8 +55,8 @@ std::shared_ptr<MovePacket> stupid_AI::MiniMaxRoot(int depth, BOARD currentMap, 
         }
         else if(currentValue == bestValue)
         {
-            srand(QTime(0,0,0).secsTo(QTime::currentTime()));
-            int random =rand()%3;
+            qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+            int random =qrand()%3;
             if (random == 2)
             {
                 bestValue= currentValue;
@@ -119,10 +119,10 @@ std::shared_ptr<MovePacket> stupid_AI::getTheSmartMove(BOARD currentMap, int AIS
 possible_boxNpiece *stupid_AI::chooseAIRandomly()
 {
     int len = (*AIsList).length();
-    srand(QTime(0,0,0).secsTo(QTime::currentTime()));
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     if (len == 0)
         return NULL;
-    int random =rand()%len;
+    int random =qrand()%len;
     possible_boxNpiece* ret = (*AIsList)[random];
     return ret;
 }

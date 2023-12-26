@@ -71,6 +71,8 @@ private:
     QGraphicsTextItem * turnDisplay;
     int playerside = 0;
     void AIsMove();
+    QStandardItemModel* lHis = NULL;
+    QStandardItemModel* rHis = NULL;
 };
 
 #endif // GAME_H

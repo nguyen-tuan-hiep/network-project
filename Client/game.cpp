@@ -14,16 +14,16 @@ game::game(QWidget *parent):QGraphicsView(parent)
     //Making the Scene
     board = NULL;
     gameScene = new QGraphicsScene();
-    gameScene->setSceneRect(0,0,1400,840);
+    gameScene->setSceneRect(0,0,1400,950);
     piece_to_placed = NULL; // important, do not forgot to initiate it. 
 
     //Making the view
-    setFixedSize(1400,850);
+    setFixedSize(1400,950);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setScene(gameScene);
     SetGamecolor();
-
+//    this->scale(0.5, 0.5);
 }
 
 
@@ -295,6 +295,7 @@ void game::mouseMoveEvent(QMouseEvent *event)
 
 void game::mouseReleaseEvent(QMouseEvent *event)
 {
+    bool dieLogHis = false;
     int startX = event->pos().x();
     int startY = event->pos().y();
     QGraphicsView::mouseReleaseEvent(event);
@@ -302,12 +303,13 @@ void game::mouseReleaseEvent(QMouseEvent *event)
     int finalY = (startY-50)/100*100;
     int x = finalX/100-3;
     int y = finalY/100;
+    QString hisTxt;
     if (playerside)
     {
         x = 7-x;
         y = 7-y;
     }
-    //qDebug()<<"x: "<<x<<" y: "<<y;
+//    qDebug()<<"x: "<<x<<" y: "<<y;
     finalY += 50;
     //if (piece_to_placed && piece_to_placed->canmove(finalPos.x(),finalPos.y())){
    //     piece_to_placed->setPos(finalPos);
@@ -349,7 +351,8 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                 checking = false;
             board->gobackThinking();
 
-            int diediediedie = targetBox->getpiece()->die();
+            int diediediedie = targetBox->getpiece()->die(playerside);
+            dieLogHis = true;
             if (diediediedie+1)
             {
                 qDebug() << "Game over!";
@@ -365,7 +368,11 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                     }
 
                 }
-                piece_to_placed->moveTo(x,y);
+                hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
+                if(piece_to_placed->getside())
+                    rHis->appendRow(new QStandardItem(hisTxt));
+                else
+                    lHis->appendRow(new QStandardItem(hisTxt));
                 piece_to_placed->setZValue(piece_to_placed->origin_zValue);
                 piece_to_placed = NULL;
                 return;
@@ -381,7 +388,11 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                 }
 
             }
-            piece_to_placed->moveTo(x,y);
+            hisTxt = piece_to_placed->moveTo(x,y, dieLogHis);
+            if(piece_to_placed->getside())
+                rHis->appendRow(new QStandardItem(hisTxt));
+            else
+                lHis->appendRow(new QStandardItem(hisTxt));
             if (y == 0+Pieceside*7)
             {
                 Piece *newPiece = new queen(Pieceside,x,y);
@@ -453,7 +464,8 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                 }
                 else
                 {
-                    int diediediedie = targetBox->getpiece()->die();
+                    int diediediedie = targetBox->getpiece()->die(playerside);
+                    dieLogHis = true;
                     //qDebug() << diediediedie;
                     if (diediediedie+1)
                     {
@@ -470,7 +482,11 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                             }
 
                         }
-                        piece_to_placed->moveTo(x,y);
+                        hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
+                        if(piece_to_placed->getside())
+                            rHis->appendRow(new QStandardItem(hisTxt));
+                        else
+                            lHis->appendRow(new QStandardItem(hisTxt));
                         piece_to_placed->setZValue(piece_to_placed->origin_zValue);
                         piece_to_placed = NULL;
                         return;
@@ -505,7 +521,11 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                     }
                 }
             }
-            piece_to_placed->moveTo(x,y);
+            hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
+            if(piece_to_placed->getside())
+                rHis->appendRow(new QStandardItem(hisTxt));
+            else
+                lHis->appendRow(new QStandardItem(hisTxt));
             if (y == 0+Pieceside*7 && piece_to_placed->getType()==4)
             {
                 Piece *newPiece = new queen(Pieceside,x,y);
@@ -579,7 +599,7 @@ void game::setTurn(int i)
 void game::AIsMove()
 {
     delay();
-
+    bool dieLogHis = false;
     std::shared_ptr<possible_boxNpiece> lol = board->findGoodMovesOneTrun(AIsSide, Siri);
     //for random move
 
@@ -594,18 +614,27 @@ void game::AIsMove()
     if(lol->possibleMove->hasPiece())
     {
         Piece* willdie = lol->possibleMove->getpiece();
-        int diediediedie = willdie->die();
-            //qDebug() << diediediedie;
-            if (diediediedie+1)
-            {
-                qDebug() << "Game over!";
-                gameOver(diediediedie);
-                lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow);
-                lol = NULL;
-                return;
-            }
+        int diediediedie = willdie->die(playerside);
+        dieLogHis = true;
+        //qDebug() << diediediedie;
+        if (diediediedie+1)
+        {
+            qDebug() << "Game over!";
+            gameOver(diediediedie);
+            QString hisTxt = lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow,dieLogHis);
+            if(lol->targetPiece->getside())
+                rHis->appendRow(new QStandardItem(hisTxt));
+            else
+                lHis->appendRow(new QStandardItem(hisTxt));
+            lol = NULL;
+            return;
+        }
     }
-    lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow);
+    QString hisTxt = lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow,dieLogHis);
+    if(lol->targetPiece->getside())
+        rHis->appendRow(new QStandardItem(hisTxt));
+    else
+        lHis->appendRow(new QStandardItem(hisTxt));
 
     if (board->checkCanCheck() == (!AIsSide))
         checking = true;
@@ -651,17 +680,17 @@ void game::playOffline()
 
     turn = 0; //0 is white and 1 is black
     turnDisplay = new QGraphicsTextItem();
-    turnDisplay->setPos(width()/2-100,10);
+    turnDisplay->setPos(80,10);
     turnDisplay->setZValue(1);
     turnDisplay->setDefaultTextColor(Qt::white);
     turnDisplay->setFont(QFont("",20));
     turnDisplay->setPlainText("Turn : WHITE");
 
     check = new QGraphicsTextItem();
-    check->setPos(width()/2-100,850);
+    check->setPos(width()-250,10);
     check->setZValue(5);
     check->setDefaultTextColor(Qt::red);
-    check->setFont(QFont("",45));
+    check->setFont(QFont("",35));
     check->setPlainText("CHECK!");
     check->setVisible(false);
 
@@ -794,6 +823,7 @@ bool game::CanYouMove(int yourturn)
 
 void game::receiveMove(onlineMove* move)
 {
+    bool dieLogHis = false;
     int fromX = move->fromX;
     int fromY = move->fromY;
     int x = move->ToX;
@@ -807,12 +837,17 @@ void game::receiveMove(onlineMove* move)
 
     if (targetBox->hasPiece())
     {
-        int diediediedie = targetBox->getpiece()->die();
+        int diediediedie = targetBox->getpiece()->die(playerside);
+        dieLogHis = true;
         if (diediediedie+1)
         {
             qDebug() << "Game over!";
             gameOver(diediediedie);
-            targetPiece->moveTo(x,y);
+            QString hisTxt = targetPiece->moveTo(x,y,dieLogHis);
+            if(targetPiece->getside())
+                rHis->appendRow(new QStandardItem(hisTxt));
+            else
+                lHis->appendRow(new QStandardItem(hisTxt));
             return;
         }
     }
@@ -825,9 +860,17 @@ void game::receiveMove(onlineMove* move)
             rookX = 3;
         else
             rookX = 5;
-        rook->moveTo(rookX, fromY);
+        QString hisTxt = rook->moveTo(rookX, fromY,dieLogHis);
+        if(rook->getside())
+            rHis->appendRow(new QStandardItem(hisTxt));
+        else
+            lHis->appendRow(new QStandardItem(hisTxt));
     }
-    targetPiece->moveTo(x,y);
+    QString hisTxt = targetPiece->moveTo(x,y,dieLogHis);
+    if(targetPiece->getside())
+        rHis->appendRow(new QStandardItem(hisTxt));
+    else
+        lHis->appendRow(new QStandardItem(hisTxt));
 
     if (board->checkCanCheck() == (!turn))
         checking = true;

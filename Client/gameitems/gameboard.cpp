@@ -45,16 +45,6 @@ void gameboard::placeBoxes()
             boardbox* boxes = new boardbox(i,j);
             boxes->resetcolor();
             this->boxes[i][j] = boxes;
-            if(playerside)
-            {
-                boxes->setPos(300+(7-i)*100,50+(7-j)*100);
-                //this->boxes[7-i][7-j] = boxes;
-            }
-            else
-            {
-                boxes->setPos(300+i*100,50+j*100);
-                //this->boxes[i][j] = boxes;
-            }
             boxes->setPos(300+i*100,50+j*100);
             boxes->setboard(this);
             if (boxes == NULL)
@@ -68,14 +58,20 @@ void gameboard::placeBoxes()
         boxesName[i]->setFont(QFont("",15));
     }
     for(int i = 0; i < 8; i++) {
+        QString add = QChar('A' + i);
+        if(playerside)
+            add = QChar('H' - i);
         boxesName[i]->setPos(340+i*100,20);
-        boxesName[i]->setPlainText(QChar('A' + i));
+        boxesName[i]->setPlainText(add);
         boxesName[i+8]->setPos(340+i*100,850);
-        boxesName[i+8]->setPlainText(QChar('A' + i));
+        boxesName[i+8]->setPlainText(add);
+        add = QString::number(8-i);
+        if(playerside)
+            add = QString::number(1+i);
         boxesName[i+16]->setPos(275,80+i*100);
-        boxesName[i+16]->setPlainText(QString::number(8-i));
+        boxesName[i+16]->setPlainText(add);
         boxesName[i+24]->setPos(1105,80+i*100);
-        boxesName[i+24]->setPlainText(QString::number(8-i));
+        boxesName[i+24]->setPlainText(add);
     }
     for(int i = 0; i < 32; i++) {
         Game->addToScene(boxesName[i]);

@@ -16,7 +16,7 @@ class Chatroom: public QDialog
     Q_OBJECT
 public:
     friend class gameLobby;
-    Chatroom(gameLobby *parent,Qt::WindowFlags f=Qt::Widget);
+    Chatroom(gameLobby *parent,Qt::WindowFlags f=0);
     QListWidget *contentListWidget;
     QLabel *userNameLabel;
     QLineEdit *userNameLineEdit;

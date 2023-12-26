@@ -14,7 +14,7 @@ Server::Server(int PORT, bool BroadcastPublically) //Port = port to broadcast on
         servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Broadcast locally
 
     sListen = socket(AF_INET, SOCK_STREAM, 0); //Create socket to listen for new connections
-    if ((::bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
+    if ((bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
 	{
         string ErrorMsg = "Failed to bind the address to our listening socket.";
         std::cout << ErrorMsg << std::endl;
@@ -175,7 +175,7 @@ bool Server::Processinfo(int ID)
                     std::cout << "Failed to open file for writing\n";
                 else {
                     QTextStream out(&file);
-                    out << reg_ID << Qt::endl << reg_PW << Qt::endl;
+                    out << reg_ID << endl << reg_PW << endl;
                     file.close();
                 }
             }

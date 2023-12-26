@@ -35,14 +35,17 @@ boardbox *Piece::getCurrentBox()
     return CurrentBox;
 }
 
-int Piece::die()
+int Piece::die(bool playerBlackSide)
 {
     if (side)
     {
         int ROW = deadBlack/3;
         int COL = deadBlack - 3*ROW;
         deadBlack++;
-        this->setPos(1150+COL*75, 50+ROW*80);
+        if(playerBlackSide)
+            this->setPos(COL*75, 50+ROW*80);
+        else
+            this->setPos(COL*75, 450+ROW*80);
         this->isdead =true;
         this->CurrentBox->removepiece();
         this->CurrentBox =NULL;
@@ -52,7 +55,10 @@ int Piece::die()
         int ROW = deadWhite/3;
         int COL = deadWhite - 3*ROW;
         deadWhite++;
-        this->setPos(COL*75, 50+ROW*80);
+        if(playerBlackSide)
+            this->setPos(COL*75, 450+ROW*80);
+        else
+            this->setPos(COL*75, 50+ROW*80);
         this->isdead =true;
         this->CurrentBox->removepiece();
         this->CurrentBox =NULL;
@@ -116,9 +122,12 @@ bool Piece::pawnAttack(int x, int y)
     return false;
 }
 
-QString Piece::moveTo(int x, int y)
+QString Piece::moveTo(int x, int y, bool diePrefix)
 {
-    QString res = pieName[getType()-4]+": "+QChar('A'+location[0])+QString::number(8 - location[1])+" -> ";
+    QString prefix = " -> ";
+    if(diePrefix)
+        prefix = " x ";
+    QString res = pieName[getType()-4]+": "+('A'+location[0])+QString::number(8 - location[1])+prefix;
     int xPos, yPos;
     if(this->getCurrentBox()->getboard()->playerSside())
     {
@@ -133,7 +142,7 @@ QString Piece::moveTo(int x, int y)
     boardbox *targetBox = this->getCurrentBox()->getboard()->getbox(x,y);
     this->setPos(xPos,yPos);
     this->setlocation(x,y);
-    res += (QChar('A'+x)+QString::number(8-y));
+    res += (('A'+x)+QString::number(8-y));
     this->moved();
     this->getCurrentBox()->removepiece();
     this->setCurrentBox(targetBox);
@@ -143,7 +152,6 @@ QString Piece::moveTo(int x, int y)
 
 void Piece::tryToMoveTo(int x, int y)
 {
-//    QString res = pieName[getType()-4]+":2 "+('A'+location[0])+QString::number(8-location[1])+" -> ";
     boardbox *targetBox = this->getCurrentBox()->getboard()->getbox(x,y);
     targetBox->getboard()->NosupposedDie();
     if (targetBox->hasPiece())
@@ -157,11 +165,9 @@ void Piece::tryToMoveTo(int x, int y)
     this->getCurrentBox()->getboard()->oldlocation[0] = oldx;
     this->getCurrentBox()->getboard()->oldlocation[1] = oldy;  
     this->setlocation(x,y);
-//    res += (('A'+x)+QString::number(8-y));
     this->getCurrentBox()->removepiece();
     this->setCurrentBox(targetBox);
     this->getCurrentBox()->placepiece(this);
-//    return res;
 }
 
 void Piece::Reset_DeadPieces()
