@@ -1,2 +1,1 @@
-admin
-ad123
+/tmp/chessAccounts.txt

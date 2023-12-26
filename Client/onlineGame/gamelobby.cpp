@@ -23,7 +23,7 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
 {
     gameLobby::is_opened = true;
     OnlineScene = new QGraphicsScene();
-    OnlineScene->setSceneRect(0,0,1400,840);
+    OnlineScene->setSceneRect(0,0,1400,940);
     chRoom = nullptr;
     //Making the view Full()
     setFixedSize(1400,850);
@@ -90,7 +90,7 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     QFont titleFont("arial" , 50);
     titleText->setFont( titleFont);
     int xPos = width()/2 - titleText->boundingRect().width()/2;
-    int yPos = 150;
+    int yPos = 100;
     titleText->setPos(xPos,yPos);
     //show!
     OnlineScene->addItem(titleText);
@@ -101,6 +101,20 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     connect(playButton,SIGNAL(clicked()) , this , SLOT(ReturnToMenu()));
     playButton->hide();
     OnlineScene->addItem(playButton);
+    // online users:
+    QListView* listView = new QListView();
+    onlineUserList = new QStandardItemModel();
+    listView->setModel(onlineUserList);
+    QGraphicsProxyWidget* proxyWidget = new QGraphicsProxyWidget();
+    proxyWidget->setWidget(listView);
+    proxyWidget->resize(200, 300);
+    proxyWidget->setPos(50, 250);
+    OnlineScene->addItem(proxyWidget);
+    getOnUserBtn = new button("Refresh: Online Users");
+    getOnUserBtn->setPos(50,200);
+    connect(getOnUserBtn,SIGNAL(clicked()) , this , SLOT(GetOnlineUser()));
+    OnlineScene->addItem(getOnUserBtn);
+
     hostWindow();
     LobbySUI();
     chRoom->show();
@@ -274,6 +288,19 @@ void gameLobby::CancelHost()
     }
 }
 
+void gameLobby::GetOnlineUser()
+{
+    cJSON * Mesg;
+    Mesg=cJSON_CreateObject();
+    cJSON_AddStringToObject(Mesg,"Type","GetOnlineUsers");
+    char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
+    cJSON_Delete(Mesg);
+    if(send(Connection, JsonToSend, MAXSIZE, NULL) <= 0)
+    {
+        qDebug() << "Send message to server failed!.";
+    }
+}
+
 bool gameLobby::backToLobby()
 {
     cJSON * Mesg;
@@ -401,6 +428,16 @@ bool gameLobby::GetString()
             emit moveTo(Move);
             Move = NULL;
         }
+    }
+    else if (type == "OnlineUsersList")
+    {
+        onlineUserList->clear();
+        cJSON *System_Info;
+        System_Info = cJSON_GetObjectItem(json, "Response");
+        QStringList onlineStr = QString::fromStdString(System_Info->valuestring).split(",");
+        for(auto s : onlineStr)
+            onlineUserList->appendRow(new QStandardItem(s));
+        cJSON_Delete(json);
     }
     else if (type == "System")
     {

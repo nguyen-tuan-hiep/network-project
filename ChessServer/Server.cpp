@@ -1,4 +1,4 @@
-#include "Server.h"
+﻿#include "Server.h"
 #include <arpa/inet.h>
 #include <QFile>
 #include <QTextStream>
@@ -199,6 +199,7 @@ bool Server::Processinfo(int ID)
                 string MOTD = "MOTD: Welcome! This is the message of the day!.";
                 SendString(ID, MOTD);
                 sendGameList(ID);
+                OnlineUserList[ID] = user_ID;
             }
             else
                 sendSystemInfo(ID, "LogIn_FAILED");
@@ -337,6 +338,20 @@ bool Server::Processinfo(int ID)
 			else
 				PlayerList[ID]->returnToLobby();
 		}
+        else if (type == "GetOnlineUsers")
+        {
+            string res = "";
+            for(auto e : OnlineUserList)
+                res += (e.second.toStdString() + ",");
+            cJSON *json = cJSON_CreateObject();
+            cJSON_AddStringToObject(json, "Type", "OnlineUsersList");
+            cJSON_AddStringToObject(json, "Response", res.c_str());
+            char *JsonToSend = cJSON_Print(json);
+            cJSON_Delete(json);
+            cout << "send:" << endl << JsonToSend << " To: " << ID << endl;
+            string Send(JsonToSend);
+            SendString(ID, Send);
+        }
 		else if (type == "Exit")
 			return false;
 	}
@@ -434,6 +449,7 @@ bool Server::sendGameList(int ID)
 	return true;
 }
 
+
 void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connections array
 {
 	while (true)
@@ -443,6 +459,7 @@ void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connecti
 	}
 	cout << "Lost connection to client ID: " << ID << endl;
     close(serverptr->Connections[ID]);
+    OnlineUserList.erase(ID);
 	if (serverptr->PlayerList[ID]->AreYouInGame() >= 0)
 	{
 		cout << "delete its game room: " <<  endl;

@@ -70,8 +70,10 @@ private:
 	int GameNum = 0;
 	unordered_map<int, onlineGame> GameList;
 	unordered_map<int, player> PlayerList;
+    unordered_map<int, QString> OnlineUserList;
     std::thread threadList[512];
     QVector<Account> accList;
+    QString accsFilePath;
 };
 
 static Server * serverptr; 

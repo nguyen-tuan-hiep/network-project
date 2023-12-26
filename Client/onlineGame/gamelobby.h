@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QCloseEvent>
 #include <QMutex>
+#include <QStandardItemModel>
 #include <cstring>
 
 #include <sys/types.h>
@@ -95,6 +96,8 @@ private:
     void hostWindow_hide();
     void hostWindow_show();
     bool requestLogIn(QString id, QString pw);
+    QStandardItemModel* onlineUserList = NULL;
+    button* getOnUserBtn;
 
     //void CancelWaiting(); //need to be done
         //void sendMessage(string message);
@@ -111,7 +114,7 @@ public slots:
     void I_wannaPlayAgain();
     void ReturnToMenu();
     void CancelHost();
-
+    void GetOnlineUser();
 
 };
 
