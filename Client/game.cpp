@@ -665,6 +665,31 @@ void game::playOffline()
     check->setPlainText("CHECK!");
     check->setVisible(false);
 
+    // history:
+    QListView* lListView = new QListView();
+    QListView* rListView = new QListView();
+    lHis = new QStandardItemModel();
+    rHis = new QStandardItemModel();
+    lListView->setModel(lHis);
+    rListView->setModel(rHis);
+    QGraphicsProxyWidget* proxyWidget1 = new QGraphicsProxyWidget();
+    proxyWidget1->setWidget(lListView);
+    QGraphicsProxyWidget* proxyWidget2 = new QGraphicsProxyWidget();
+    proxyWidget2->setWidget(rListView);
+    // Set the position and size of the proxy widget
+    if(playerside) {
+        proxyWidget1->setPos(width()-250, 70);
+        proxyWidget2->setPos(width()-250, 600);
+    }
+    else {
+        proxyWidget1->setPos(width()-250, 600);
+        proxyWidget2->setPos(width()-250, 70);
+    }
+    proxyWidget1->resize(200, 250);
+    proxyWidget2->resize(200, 250);
+    // Add the proxy widget to the scene
+    gameScene->addItem(proxyWidget1);
+    gameScene->addItem(proxyWidget2);
 }
 
 void game::SetGamecolor()
