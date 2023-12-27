@@ -14,7 +14,7 @@ Server::Server(int PORT, bool BroadcastPublically) //Port = port to broadcast on
         servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Broadcast locally
 
     sListen = socket(AF_INET, SOCK_STREAM, 0); //Create socket to listen for new connections
-    if ((bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
+    if ((::bind(sListen, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) //Bind the address to the socket, if we fail to bind the address..
 	{
         string ErrorMsg = "Failed to bind the address to our listening socket.";
         std::cout << ErrorMsg << std::endl;
@@ -164,7 +164,7 @@ bool Server::Processinfo(int ID)
             QString reg_PW = user_PW_Json->valuestring;
             bool flag = false;
             for(int i = 0; i < accList.size(); i++)
-                if(accList[i].ID == reg_ID && accList[i].PassW == reg_PW) {
+                if(accList[i].ID == reg_ID ) {
                     flag = true;
                     break;
                 }
@@ -175,7 +175,7 @@ bool Server::Processinfo(int ID)
                     std::cout << "Failed to open file for writing\n";
                 else {
                     QTextStream out(&file);
-                    out << reg_ID << endl << reg_PW << endl;
+                    out << reg_ID << Qt::endl << reg_PW << Qt::endl;
                     file.close();
                 }
             }
@@ -187,10 +187,15 @@ bool Server::Processinfo(int ID)
             user_PW_Json = cJSON_GetObjectItem(json, "PW");
             QString user_ID = user_ID_Json->valuestring;
             QString user_PW = user_PW_Json->valuestring;
-            bool flag = false;
+            bool flag = false, isLogin = false;
             for(int i = 0; i < accList.size(); i++) {
                 if(accList[i].ID == user_ID && accList[i].PassW == user_PW) {
+                    if(accList[i].login){
+                        isLogin = true;
+                        break;
+                    }
                     flag = true;
+                    accList[i].login = true;
                     break;
                 }
             }
@@ -201,8 +206,11 @@ bool Server::Processinfo(int ID)
                 sendGameList(ID);
                 OnlineUserList[ID] = user_ID;
             }
-            else
-                sendSystemInfo(ID, "LogIn_FAILED");
+            else{
+                if(!isLogin) sendSystemInfo(ID, "LogIn_FAILED_ID_PW");
+                else sendSystemInfo(ID,"LogIn_FAILED_login");
+            }
+
         }
 		else if (type == "CreateRoom")
 		{
@@ -459,6 +467,12 @@ void Server::ClientHandlerThread(int ID) //ID = the index in the SOCKET Connecti
 	}
 	cout << "Lost connection to client ID: " << ID << endl;
     close(serverptr->Connections[ID]);
+    for(int i = 0; i < accList.size(); i++) {
+        if(accList[i].ID == OnlineUserList[ID]) {
+            accList[i].login = false;
+            break;
+        }
+    }
     OnlineUserList.erase(ID);
 	if (serverptr->PlayerList[ID]->AreYouInGame() >= 0)
 	{

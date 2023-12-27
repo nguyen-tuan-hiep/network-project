@@ -28,6 +28,7 @@ typedef shared_ptr<Player> player;
 struct Account {
     QString ID;
     QString PassW;
+    bool login = false;
     Account() {};
     Account(QString id, QString pw) {
         ID = id;

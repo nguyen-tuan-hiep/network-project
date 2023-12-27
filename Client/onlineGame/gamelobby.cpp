@@ -158,7 +158,8 @@ bool gameLobby::requestLogIn(QString id, QString pw) {
             qDebug() << QString::fromStdString(type) << " " << QString::fromStdString(systemInfo);
             if (type == "System" && systemInfo == "LogIn_SUCCESS")
                 return true;
-            QMessageBox::critical(NULL, "Error", "Failed to Log In!\nIncorrect ID or password");
+            if(systemInfo == "LogIn_FAILED_ID_PW") QMessageBox::critical(NULL, "Error", "Failed to Log In!\nIncorrect ID or password");
+            else QMessageBox::critical(NULL, "Error", "Failed to Log In!\nAccount currently in use!");
             return false;
         }
         QThread::msleep(100);
