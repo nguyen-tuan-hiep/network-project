@@ -1001,7 +1001,7 @@ bool findallmovess::attacked(int px, int py, std::vector<std::vector<int>> map)
                 return true;
             }
         }
-        else if (py - 2 >=0)
+        if (py - 2 >=0)
         {
             x = px+1;
             y = py-2;
@@ -1023,7 +1023,7 @@ bool findallmovess::attacked(int px, int py, std::vector<std::vector<int>> map)
                 return true;
             }
         }
-        else if (py - 2 >=0)
+        if (py - 2 >=0)
         {
             x = px-1;
             y = py-2;
@@ -1045,7 +1045,7 @@ bool findallmovess::attacked(int px, int py, std::vector<std::vector<int>> map)
                 return true;
             }
         }
-        else if (py - 1 >=0)
+        if (py - 1 >=0)
         {
             x = px+2;
             y = py-1;
@@ -1067,7 +1067,7 @@ bool findallmovess::attacked(int px, int py, std::vector<std::vector<int>> map)
                 return true;
             }
         }
-        else if (py - 1 >=0)
+        if (py - 1 >=0)
         {
             x = px-2;
             y = py-1;
