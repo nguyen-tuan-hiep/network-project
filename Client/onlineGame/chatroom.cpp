@@ -8,8 +8,9 @@
 
 Chatroom::Chatroom(gameLobby *parent,Qt::WindowFlags f): QDialog(parent,f)
 {
+    setWindowFlags(this->windowFlags() & ~Qt::WindowCloseButtonHint);
     Parent = parent;
-    setWindowTitle(tr("TCP Client"));
+    setWindowTitle(tr("Chat room"));
 
     contentListWidget = new QListWidget;
 
@@ -19,17 +20,14 @@ Chatroom::Chatroom(gameLobby *parent,Qt::WindowFlags f): QDialog(parent,f)
     userNameLineEdit = new QLineEdit;
 
     sendBtn= new QPushButton(tr("Send"));
-    CreateChessRoomBtn = new QPushButton(tr("Create a Game Room"));
     mainLayout = new QGridLayout(this);
     mainLayout->addWidget(contentListWidget,0,0,1,2);
     mainLayout->addWidget(userNameLabel,1,0);
     mainLayout->addWidget(userNameLineEdit,1,1);
     mainLayout->addWidget(sendLineEdit,2,0,1,2);
     mainLayout->addWidget(sendBtn,3,0,1,2);
-    mainLayout->addWidget(CreateChessRoomBtn,4,0,1,2);
     userNameLineEdit->setText(parent->id_id);
     connect(sendBtn,SIGNAL(clicked()),this,SLOT(sendMessage()));
-    connect(CreateChessRoomBtn,SIGNAL(clicked()),this,SLOT(CreateRoom()));
 }
 
 void Chatroom::Showmessage(char* String)
@@ -64,25 +62,4 @@ void Chatroom::sendMessage()
     sendLineEdit->clear();
 }
 
-void Chatroom::CreateRoom()
-{
-    if(userNameLineEdit->text()=="")
-        return ;
-    QString name= userNameLineEdit->text();
-    if (name.length() <= 16)
-    {
-        if (!Parent->host && !Parent->waiting && !Parent->inRooms)
-        {
-            std::string user = userNameLineEdit->text().toStdString();
-            bool send = Parent->CreateRoom(user);
-            if (!send)
-            {
-            // send failed!
-            }
-        }
-    }
-    else
-    {
-        // name is so long!
-    }
-}
+

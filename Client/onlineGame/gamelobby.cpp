@@ -114,7 +114,15 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     getOnUserBtn->setPos(50,200);
     connect(getOnUserBtn,SIGNAL(clicked()) , this , SLOT(GetOnlineUser()));
     OnlineScene->addItem(getOnUserBtn);
+    createRoomBtn = new button("Create a Game Room");
+    createRoomBtn->setPos(400,750);
+    connect(createRoomBtn,SIGNAL(clicked()) , this , SLOT(CreateAGameRoom()));
+    OnlineScene->addItem(createRoomBtn);
 
+    showChatBtn = new button("Show / Hide Chat");
+    showChatBtn->setPos(700,750);
+    connect(showChatBtn,SIGNAL(clicked()) , this , SLOT(ShowChatRoom()));
+    OnlineScene->addItem(showChatBtn);
     hostWindow();
     LobbySUI();
     chRoom->show();
@@ -300,6 +308,28 @@ void gameLobby::GetOnlineUser()
     {
         qDebug() << "Send message to server failed!.";
     }
+}
+
+void gameLobby::CreateAGameRoom()
+{
+    if (!host && !waiting && !inRooms)
+    {
+        std::string user = id_id.toStdString();
+        if(user.length() > 16)
+            user = user.substr(0, 16);
+        if (!CreateRoom(user))
+        {
+            // send failed!
+        }
+    }
+}
+
+void gameLobby::ShowChatRoom()
+{
+    if(chRoom->isVisible())
+        chRoom->hide();
+    else
+        chRoom->show();
 }
 
 bool gameLobby::backToLobby()

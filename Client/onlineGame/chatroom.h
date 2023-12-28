@@ -22,7 +22,6 @@ public:
     QLineEdit *userNameLineEdit;
     QLineEdit *sendLineEdit;
     QPushButton *sendBtn;
-    QPushButton *CreateChessRoomBtn;
     QGridLayout *mainLayout;
     bool status;
     QString userName;
@@ -33,7 +32,6 @@ public:
     //~Chatroom();
 private slots:
     void sendMessage();
-    void CreateRoom();
     //void CreateChessRoom();
 private:
     gameLobby* Parent;

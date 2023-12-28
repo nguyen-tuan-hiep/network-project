@@ -98,7 +98,8 @@ private:
     bool requestLogIn(QString id, QString pw);
     QStandardItemModel* onlineUserList = NULL;
     button* getOnUserBtn;
-
+    button* createRoomBtn;
+    button* showChatBtn;
     //void CancelWaiting(); //need to be done
         //void sendMessage(string message);
 
@@ -115,7 +116,8 @@ public slots:
     void ReturnToMenu();
     void CancelHost();
     void GetOnlineUser();
-
+    void CreateAGameRoom();
+    void ShowChatRoom();
 };
 
 
