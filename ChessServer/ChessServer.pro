@@ -1,4 +1,5 @@
 QT -= gui
+QT += sql
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -16,12 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     Server.cpp \
+    SqlConnector.cpp \
     cJSON/cJSON.c
 
 HEADERS += \
     Games.h \
     Player.h \
     Server.h \
+    SqlConnector.h \
     cJSON/cJSON.h
 
 RESOURCES += \
