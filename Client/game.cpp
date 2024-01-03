@@ -64,12 +64,19 @@ void game::register_user() {
     QLineEdit text4LineEdit;
     QLineEdit text5LineEdit;
     text1LineEdit.setText("127.0.0.1");
+    QComboBox level;
+    level.addItem(tr("New to chess"));
+    level.addItem(tr("Beginner"));
+    level.addItem(tr("Intermediate"));
+    level.addItem(tr("Advanced"));
+    level.addItem(tr("Expert"));
     // Create a layout for the dialog
     QFormLayout layout(&dialog);
     layout.addRow("Server IP address:", &text1LineEdit);
     layout.addRow("ID:", &text2LineEdit);
     layout.addRow("Password:", &text3LineEdit);
     layout.addRow("Confirm password:", &text4LineEdit);
+    layout.addRow("Level", &level);
     layout.addRow("Verification code:", &text5LineEdit);
     // Create an OK button
     QPushButton okButton("Register");
@@ -111,6 +118,7 @@ void game::register_user() {
         cJSON_AddStringToObject(Mesg,"Type","SignUp");
         cJSON_AddStringToObject(Mesg,"ID", in_txt[1].toStdString().c_str());
         cJSON_AddStringToObject(Mesg,"PW", in_txt[2].toStdString().c_str());
+        cJSON_AddNumberToObject(Mesg,"ELO",(level.currentIndex() + 1) * 400);
         char *JsonToSend = cJSON_Print(Mesg);
         cJSON_Delete(Mesg);
         if (send(socfd, JsonToSend, 512, NULL) < 0) {
@@ -119,6 +127,7 @@ void game::register_user() {
         }
         QThread::sleep(1);
         Mesg = cJSON_CreateObject();
+
         cJSON_AddStringToObject(Mesg,"Type","Exit");
         JsonToSend = cJSON_Print(Mesg);   //make the json as char*
         cJSON_Delete(Mesg);
