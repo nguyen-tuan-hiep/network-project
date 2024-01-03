@@ -56,7 +56,7 @@ private:
 
     void ClientHandlerThread(int arg);
     void GetAllAccounts();
-    void Signup(QString username, QString password, int elo);
+    bool Signup(QString username, QString password, int elo);
 
 private:
 	//-------------------------------------------
@@ -79,7 +79,6 @@ private:
     std::thread threadList[512];
     QVector<Account> accList;
     QString accsFilePath;
-    SqlConnector connector;
 };
 
 static Server * serverptr; 

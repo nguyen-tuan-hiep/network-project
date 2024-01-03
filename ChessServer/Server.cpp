@@ -107,7 +107,8 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
     // file.close();
 }
 
-void Server::Signup(QString username, QString password, int elo){
+bool Server::Signup(QString username, QString password, int elo){
+    SqlConnector connector;
     if(connector.openConnection()){
         qDebug() << "Connected to the database!";
     }else{
@@ -122,15 +123,18 @@ void Server::Signup(QString username, QString password, int elo){
     query.bindValue(":elo",elo);
     if (query.exec()) {
         qDebug() << "Data inserted successfully.";
+        return true;
     } else {
         qDebug() << "Error executing query:";
         qDebug() << query.lastError().text();
+        return false;
     }
     connector.closeConnection();
 }
 
 void Server::GetAllAccounts()
 {
+    SqlConnector connector;
     if(connector.openConnection()){
         qDebug() << "Connected to the database!";
     }else{
@@ -186,16 +190,6 @@ void Server::sendMessToClients(string Message) {
             cout << "Failed to send message to client ID: " << it->first << endl;
         log("Failed to send message to client ID: " + std::to_string(it->first));
     }
-    //----------------------------old loop-----------------------------------------------------------
-    // for (int i = 0; i < TotalConnections; i++)
-    //{
-    //	//if (i == ID) //If connection is the user who sent the message...
-    //		//continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
-
-    //	if (!SendString(i, Message)) //Send message to connection at index i, if message fails to be sent...
-    //		cout << "Failed to send message to client ID: " << i << endl;
-    //}
-    //-----------------------------------------------------------------------------------------------
 }
 
 bool Server::ListenForNewConnection() {
@@ -247,7 +241,11 @@ bool Server::Processinfo(int ID) {
             QString reg_ID = user_ID_Json->valuestring;
             QString reg_PW = user_PW_Json->valuestring;
             int reg_ELO = user_Elo_Json->valueint;
-            Signup(reg_ID, reg_PW, reg_ELO);
+            if(Signup(reg_ID, reg_PW, reg_ELO)){
+                sendSystemInfo(ID,"SignUp_SUCCESS");
+            }else{
+                sendSystemInfo(ID,"SignUp_FAILED");
+            }
 
             // bool flag = false;
             // for(int i = 0; i < accList.size(); i++)

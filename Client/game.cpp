@@ -125,15 +125,41 @@ void game::register_user() {
             QMessageBox::critical(NULL, "Error", "Failed to Register!");
             return;
         }
-        QThread::sleep(1);
-        Mesg = cJSON_CreateObject();
 
-        cJSON_AddStringToObject(Mesg,"Type","Exit");
-        JsonToSend = cJSON_Print(Mesg);   //make the json as char*
-        cJSON_Delete(Mesg);
-        send(socfd, JsonToSend, 512, NULL);
+        // receive response
+        char buffer[512] = {0};
+        for(int i = 0; i < 50; i++) {
+            if (recv(socfd, buffer, sizeof(buffer), MSG_DONTWAIT) > 0) {
+                qDebug() << buffer;
+                cJSON *json, *json_type, *json_System_Info;
+                json = cJSON_Parse(buffer);
+                json_type = cJSON_GetObjectItem(json , "Type");
+                json_System_Info = cJSON_GetObjectItem(json, "System_Info");
+                std::string type = "";
+                std::string systemInfo;
+                if (json_type != NULL && json_System_Info != NULL) {
+                    type = json_type->valuestring;
+                    systemInfo = json_System_Info->valuestring;
+                }
+                cJSON_Delete(json);
+                qDebug() << QString::fromStdString(type) << " " << QString::fromStdString(systemInfo);
+                if (type == "System" && systemInfo == "SignUp_SUCCESS"){
+                    QMessageBox::information(NULL, "Congratulation", "Register successfully!");
+                    ::close(socfd);
+                    return;
+                }
+                else if(systemInfo == "SignUp_FAILED"){
+                    QMessageBox::critical(NULL, "Error", "Failed to register!");
+                    ::close(socfd);
+                    return;
+                }
+            }
+            QThread::msleep(100);
+        }
+
+        QMessageBox::critical(NULL, "Error", "Log In timeout!");
         ::close(socfd);
-        QMessageBox::information(NULL, "Congratulation", "Register successfully!");
+
     }
 }
 
