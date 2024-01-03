@@ -17,6 +17,7 @@
 #include "cJSON/cJSON.h"
 #include <thread>
 #include <QVector>
+#include "SqlConnector.h"
 
 //typedef std::vector<std::vector<unique_ptr>> BOARD;
 
@@ -28,6 +29,7 @@ typedef shared_ptr<Player> player;
 struct Account {
     QString ID;
     QString PassW;
+    int elo;
     bool login = false;
     Account() {};
     Account(QString id, QString pw) {
@@ -53,6 +55,8 @@ private:
 	void deleteGame(int ID);
 
     void ClientHandlerThread(int arg);
+    void GetAllAccounts();
+    void Signup(QString username, QString password, int elo);
 
 private:
 	//-------------------------------------------
@@ -75,6 +79,7 @@ private:
     std::thread threadList[512];
     QVector<Account> accList;
     QString accsFilePath;
+    SqlConnector connector;
 };
 
 static Server * serverptr; 

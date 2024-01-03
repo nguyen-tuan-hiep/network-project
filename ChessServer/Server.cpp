@@ -28,46 +28,99 @@ Server::Server(int PORT, bool BroadcastPublically) //Port = port to broadcast on
 	}
 	serverptr = this;
     accList.clear();
+    GetAllAccounts();
+    // get account from File
+
     // get file path
-    QFile file(":/accs.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        std::cout << "Error: Failed to open the file accs.txt.";
-        exit(0);
+    // QFile file(":/accs.txt");
+    // if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    //     std::cout << "Error: Failed to open the file accs.txt.";
+    //     exit(0);
+    // }
+    // QTextStream in(&file);
+    // if(!in.atEnd())
+    //     accsFilePath = in.readLine();
+    // file.close();
+    // if(accsFilePath.length() == 0) {
+    //     std::cout << "Error: You don't have account file path.";
+    //     exit(0);
+    // }
+    // file.setFileName(accsFilePath);
+    // if(file.exists()) {
+    //     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    //         std::cout << "Error: Failed to open the file " << accsFilePath.toStdString();
+    //         exit(0);
+    //     }
+    //     bool isID = true;
+    //     Account tmpAcc;
+    //     while (!in.atEnd()) {
+    //         if(isID)
+    //             tmpAcc.ID = in.readLine();
+    //         else {
+    //             tmpAcc.PassW = in.readLine();
+    //             accList.push_back(tmpAcc);
+    //         }
+    //         isID = !isID;
+    //     }
+    // }
+    // else {
+    //     if (!file.open(QIODevice::WriteOnly)) {
+    //         std::cout << "Error: Failed to create the file " << accsFilePath.toStdString() << endl;
+    //         std::cout << file.error() << endl;
+    //         exit(0);
+    //     }
+    // }
+    // file.close();
+}
+
+void Server::Signup(QString username, QString password, int elo){
+    if(connector.openConnection()){
+        qDebug() << "Connected to the database!";
+    }else{
+        qDebug() << "Cannot connect to the database!";
+        exit(66);
     }
-    QTextStream in(&file);
-    if(!in.atEnd())
-        accsFilePath = in.readLine();
-    file.close();
-    if(accsFilePath.length() == 0) {
-        std::cout << "Error: You don't have account file path.";
-        exit(0);
+    QSqlQuery query;
+    QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
+    query.prepare(sQuery);
+    query.bindValue(":username",username);
+    query.bindValue(":password",password);
+    query.bindValue(":elo",elo);
+    if (query.exec()) {
+        qDebug() << "Data inserted successfully.";
+    } else {
+        qDebug() << "Error executing query:";
+        qDebug() << query.lastError().text();
     }
-    file.setFileName(accsFilePath);
-    if(file.exists()) {
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            std::cout << "Error: Failed to open the file " << accsFilePath.toStdString();
-            exit(0);
-        }
-        bool isID = true;
+    connector.closeConnection();
+}
+
+void Server::GetAllAccounts()
+{
+    if(connector.openConnection()){
+        qDebug() << "Connected to the database!";
+    }else{
+        qDebug() << "Cannot connect to the database!";
+        exit(66);
+    }
+    QSqlQuery query = connector.executeQuery("SELECT * FROM accounts");
+    while (query.next()) {
+        QString user_id = query.value(0).toString();
+        QString password = query.value(1).toString();
+        int elo = query.value(2).toInt();
+
+        qDebug() << "USER ID: " << user_id;
+        qDebug() << "PW: " << password;
+        qDebug() << "ELO: " << elo;
+
         Account tmpAcc;
-        while (!in.atEnd()) {
-            if(isID)
-                tmpAcc.ID = in.readLine();
-            else {
-                tmpAcc.PassW = in.readLine();
-                accList.push_back(tmpAcc);
-            }
-            isID = !isID;
-        }
+        tmpAcc.ID = user_id;
+        tmpAcc.PassW = password;
+        tmpAcc.elo = elo;
+        accList.push_back(tmpAcc);
+
     }
-    else {
-        if (!file.open(QIODevice::WriteOnly)) {
-            std::cout << "Error: Failed to create the file " << accsFilePath.toStdString() << endl;
-            std::cout << file.error() << endl;
-            exit(0);
-        }
-    }
-    file.close();
+    connector.closeConnection();
 }
 
 bool Server::SendString(int ID, string & _string)
@@ -160,25 +213,32 @@ bool Server::Processinfo(int ID)
             user_ID_Json = cJSON_GetObjectItem(json, "ID");
             cJSON *user_PW_Json;
             user_PW_Json = cJSON_GetObjectItem(json, "PW");
+            cJSON *user_Elo_Json;
+            user_Elo_Json = cJSON_GetObjectItem(json, "ELO");
             QString reg_ID = user_ID_Json->valuestring;
             QString reg_PW = user_PW_Json->valuestring;
-            bool flag = false;
-            for(int i = 0; i < accList.size(); i++)
-                if(accList[i].ID == reg_ID ) {
-                    flag = true;
-                    break;
-                }
-            if(!flag) {
-                accList.push_back(Account(reg_ID, reg_PW));
-                QFile file(accsFilePath);
-                if (!file.open(QIODevice::Append | QIODevice::Text))
-                    std::cout << "Failed to open file for writing\n";
-                else {
-                    QTextStream out(&file);
-                    out << reg_ID << Qt::endl << reg_PW << Qt::endl;
-                    file.close();
-                }
-            }
+            int reg_ELO = user_Elo_Json->valueint;
+            Signup(reg_ID, reg_PW, reg_ELO);
+
+            // bool flag = false;
+            // for(int i = 0; i < accList.size(); i++)
+            //     if(accList[i].ID == reg_ID ) {
+            //         flag = true;
+            //         break;
+            //     }
+            // if(!flag) {
+            //     accList.push_back(Account(reg_ID, reg_PW));
+            //     // QFile file(accsFilePath);
+            //     // if (!file.open(QIODevice::Append | QIODevice::Text))
+            //     //     std::cout << "Failed to open file for writing\n";
+            //     // else {
+            //     //     QTextStream out(&file);
+            //     //     out << reg_ID << Qt::endl << reg_PW << Qt::endl;
+            //     //     file.close();
+            //     // }
+            // }else{
+            //     sendSystemInfo(ID, "SignUp")
+            // }
         }
         else if (type == "LogIn") {
             cJSON *user_ID_Json;
