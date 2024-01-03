@@ -204,10 +204,10 @@ bool Server::Processinfo(int ID) {
             if (!flag) {
                 accList.push_back(Account(reg_ID, reg_PW));
                 QFile file(accsFilePath);
-                if (!file.open(QIODevice::Append | QIODevice::Text))
+                if (!file.open(QIODevice::Append | QIODevice::Text)) {
                     std::cout << "Failed to open file for writing\n";
-                log("Failed to open file for writing");
-                else {
+                    log("Failed to open file for writing");
+                } else {
                     QTextStream out(&file);
                     out << reg_ID << Qt::endl
                         << reg_PW << Qt::endl;

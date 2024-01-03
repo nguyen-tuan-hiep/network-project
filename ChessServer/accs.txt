@@ -1,1 +1,1 @@
-/tmp/chessAccounts.txt
+../ChessServer/chessAccounts.txt
