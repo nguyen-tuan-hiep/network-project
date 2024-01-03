@@ -1,3 +1,6 @@
+## Protocol
+
+
 ## Elo Calculating Formular
 
 ### Explain
@@ -20,6 +23,10 @@ expected score=1/2.413=0.414
 ### Final formula
 K * (1 - 1/(1+10 ^ (Loser_elo - Winner_elo / 400)))
 
+### K-factor
+K = 32      below 2100
+K = 24      between 2100 and 2400
+K = 16      above 2400
 
 ### References 
 https://www.omnicalculator.com/sports/elo#elo-calculator-in-practice-elo-rating-in-a-chess-tournament
