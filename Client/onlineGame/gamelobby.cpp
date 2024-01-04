@@ -552,6 +552,13 @@ bool gameLobby::GetString()
         }
         cJSON_Delete(json);
     }
+    else if(type == "Result"){
+        cJSON *json_result;
+        json_result = cJSON_GetObjectItem(json, "elo");
+        int result = json_result->valueint;
+        id_elo += result;
+        cJSON_Delete(json);
+    }
     else if (type == "System")
     {
         cJSON *System_Info;
@@ -881,4 +888,18 @@ void gameLobby::ClientThread()
     //"Widgets must be created in the GUI thread.", file kernel\qwidget.cpp, line 1144
     else //If connection socket was not closed properly for some reason from our function
         clientptr->Signal_socketClosedfailed();
+}
+
+void gameLobby::EndGame(int color){
+    cJSON * Mesg;
+    Mesg=cJSON_CreateObject();
+    cJSON_AddStringToObject(Mesg,"Type","EndGame");
+    cJSON_AddNumberToObject(Mesg, "Winner", color);
+    char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
+    cJSON_Delete(Mesg);
+    qDebug() << JsonToSend;
+    if (send(Connection, JsonToSend, MAXSIZE, NULL))
+    {
+
+    }
 }

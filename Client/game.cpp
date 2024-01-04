@@ -15,7 +15,9 @@ game::game(QWidget *parent):QGraphicsView(parent)
     board = NULL;
     gameScene = new QGraphicsScene();
     gameScene->setSceneRect(0,0,1400,950);
-    piece_to_placed = NULL; // important, do not forgot to initiate it. 
+    piece_to_placed = NULL; // important, do not forgot to initiate it.
+
+
 
     //Making the view
     setFixedSize(1400,950);
@@ -295,6 +297,7 @@ void game::openGameLobby()
     if (!Lobby->connectError)
     {
         Lobby->show();
+
         hide();
     }
     else
@@ -799,7 +802,7 @@ void game::gameOver(int color)
 {
     turn = 2;
 
-
+    connect(this, SIGNAL(EndGame(int)), Lobby, SLOT(EndGame(int)));
     QGraphicsRectItem *rect(new QGraphicsRectItem());
     rect->setRect(0,0,450,300);
     QBrush Abrush;
@@ -815,8 +818,15 @@ void game::gameOver(int color)
     QGraphicsTextItem *whowin;
     if (color == 0)
         whowin = new QGraphicsTextItem("Black Wins!");
-    else
+    else if (color == 1)
         whowin = new QGraphicsTextItem("White Wins!");
+    else if (color == 2)
+        whowin = new QGraphicsTextItem("Draw!");
+
+    if(onlineGame){
+        emit EndGame(color);
+    }
+
     QFont titleFont("arial" , 30);
     whowin->setFont( titleFont);
     int axPos = width()/2 - whowin->boundingRect().width()/2;
@@ -824,6 +834,8 @@ void game::gameOver(int color)
     whowin->setPos(axPos,ayPos);
     whowin->setZValue(5);
     addToScene(whowin);
+
+
 
     button * replayButton = new button("Play Again");
     int qxPos = width()/2 - rect->boundingRect().width()/2 + 10;

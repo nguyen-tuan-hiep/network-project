@@ -64,6 +64,8 @@ public slots:
 protected:
     void closeEvent(QCloseEvent *event);
 
+signals:
+    void EndGame(int);
 
 private:
     gameLobby *Lobby = NULL;

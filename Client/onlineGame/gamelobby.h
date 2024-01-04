@@ -124,6 +124,7 @@ public slots:
     void ShowChatRoom();
     QStringList getTopRanking();
     QGraphicsProxyWidget *createRankingWidget();
+    void EndGame(int);
 };
 
 
