@@ -107,31 +107,70 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
     // file.close();
 }
 
-bool Server::Signup(QString username, QString password, int elo){
-    std::lock_guard<std::mutex> guard(mutexLock);
+// bool Server::Signup(QString username, QString password, int elo){
+//     std::lock_guard<std::mutex> guard(mutexLock);
+//     SqlConnector connector;
+//     if (connector.openConnection()) {
+//         qDebug() << "Connected to the database!";
+//     } else {
+//         qDebug() << "Cannot connect to the database!";
+//         exit(66);
+//     }
+//     QSqlQuery query;
+//     QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
+//     query.prepare(sQuery);
+//     query.bindValue(":username", username);
+//     query.bindValue(":password", password);
+//     query.bindValue(":elo", elo);
+//     if (query.exec()) {
+//         qDebug() << "Data inserted successfully.";
+//         return true;
+//     } else {
+//         qDebug() << "Error executing query:";
+//         qDebug() << query.lastError().text();
+//         return false;
+//     }
+//     connector.closeConnection();
+// }
+
+bool Server::Signup(QString username, QString password, int elo) {
     SqlConnector connector;
-    if (connector.openConnection()) {
+    if(connector.openConnection()) {
         qDebug() << "Connected to the database!";
+
+        // Check if the username already exists
+        QSqlQuery checkQuery;
+        checkQuery.prepare("SELECT user_id FROM accounts WHERE user_id = :username");
+        checkQuery.bindValue(":username", username);
+        if (checkQuery.exec() && checkQuery.next()) {
+            qDebug() << "Username already exists!";
+            return false; // Username already exists, return false
+        }
+
+        // Username doesn't exist, proceed to insert
+        QSqlQuery insertQuery;
+        QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password, :elo)";
+        insertQuery.prepare(sQuery);
+        insertQuery.bindValue(":username", username);
+        insertQuery.bindValue(":password", password);
+        insertQuery.bindValue(":elo", elo);
+
+        if (insertQuery.exec()) {
+            qDebug() << "Data inserted successfully.";
+            connector.closeConnection();
+            return true; // Successfully inserted
+        } else {
+            qDebug() << "Error executing query:";
+            qDebug() << insertQuery.lastError().text();
+            connector.closeConnection();
+            return false; // Error in query execution
+        }
     } else {
         qDebug() << "Cannot connect to the database!";
         exit(66);
     }
-    QSqlQuery query;
-    QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
-    query.prepare(sQuery);
-    query.bindValue(":username", username);
-    query.bindValue(":password", password);
-    query.bindValue(":elo", elo);
-    if (query.exec()) {
-        qDebug() << "Data inserted successfully.";
-        return true;
-    } else {
-        qDebug() << "Error executing query:";
-        qDebug() << query.lastError().text();
-        return false;
-    }
-    connector.closeConnection();
 }
+
 
 void Server::GetAllAccounts() {
     SqlConnector connector;
@@ -169,7 +208,7 @@ bool Server::SendString(int ID, string &_string) {
 
 bool Server::GetString(int ID, string &_string) {
     char buffer[512];
-    int RetnCheck = recv(Connections[ID], buffer, 512, 0);
+    int RetnCheck = recv(Connections[ID], buffer, 512, 0);  // nhan thong diep tu 1 ket noi voi ID cu the
     _string = buffer;
     // TO DO:
     // when recv failed ,delete it!
@@ -220,7 +259,7 @@ bool Server::Processinfo(int ID) {
                                   // Next we need to send the message out to each user
     cJSON *json, *json_type;
     json = cJSON_Parse(Message.c_str());
-    json_type = cJSON_GetObjectItem(json, "Type");
+    json_type = cJSON_GetObjectItem(json, "Type");  // kiem tra loai thong diep
     if (json_type == NULL) {
         sendMessToClients(Message);
         cout << "Processed chat message packet from user ID: " << ID << endl;
@@ -241,24 +280,45 @@ bool Server::Processinfo(int ID) {
             QString reg_ID = user_ID_Json->valuestring;
             QString reg_PW = user_PW_Json->valuestring;
             int reg_ELO = user_Elo_Json->valueint;
-            if (Signup(reg_ID, reg_PW, reg_ELO)) {
-                sendSystemInfo(ID, "SignUp_SUCCESS");
-                accList.push_back(Account(reg_ID, reg_PW, reg_ELO));
+            // if (Signup(reg_ID, reg_PW, reg_ELO)) {
+            //     sendSystemInfo(ID, "SignUp_SUCCESS");
+            //     accList.push_back(Account(reg_ID, reg_PW, reg_ELO));
+            // }else {
+            //     sendSystemInfo(ID, "SignUp_FAILED");
+            // }
+            // Check if the user already exists in the accList
+            bool userExists = false;
+            for (const auto &acc : accList) {
+                if (acc.ID == reg_ID) {
+                    userExists = true;
+                    break;
+                }
+            }
+
+            if (userExists) {
+                sendSystemInfo(ID, "SignUp_FAILED_UserExists");
             } else {
-                sendSystemInfo(ID, "SignUp_FAILED");
+                if (Signup(reg_ID, reg_PW, reg_ELO)) {
+                    sendSystemInfo(ID, "SignUp_SUCCESS");
+                    accList.push_back(Account(reg_ID, reg_PW, reg_ELO));
+                } else {
+                    sendSystemInfo(ID, "SignUp_FAILED");
+                }
             }
         } else if (type == "LogIn") {
+            // su dung cSJON de lay thong tin user
             cJSON *user_ID_Json;
             user_ID_Json = cJSON_GetObjectItem(json, "ID");
             cJSON *user_PW_Json;
             user_PW_Json = cJSON_GetObjectItem(json, "PW");
+            // chuyen sang kieu QString de tich hop vao cac ham cua QT
             QString user_ID = user_ID_Json->valuestring;
             QString user_PW = user_PW_Json->valuestring;
             int flag = -1, isLogin = false;
             for (int i = 0; i < accList.size(); i++) {
                 if (accList[i].ID == user_ID && accList[i].PassW == user_PW) {
                     if (accList[i].login) {
-                        isLogin = true;
+                        isLogin = true; // tai khoan da duoc dang nhap va khong can update lai trang thai dang nhap
                         break;
                     }
                     flag = i;
@@ -276,7 +336,7 @@ bool Server::Processinfo(int ID) {
                 if (!isLogin)
                     sendSystemInfo(ID, "LogIn_FAILED_ID_PW");
                 else
-                    sendSystemInfo(ID, "LogIn_FAILED_login");
+                    sendSystemInfo(ID, "LogIn_FAILED_login");   // tai khoan da duoc dang nhap
             }
 
         } else if (type == "CreateRoom") {
@@ -290,9 +350,9 @@ bool Server::Processinfo(int ID) {
                 Username = cJSON_GetObjectItem(json, "User");
                 int gameID = GameNum;
                 GameNum++;
-                onlineGame newGame(new Game(gameID, ID, Username->valuestring));
-                PlayerList[ID]->hostGame(gameID, newGame);
-                newGame->hostIs(PlayerList[ID]);
+                onlineGame newGame(new Game(gameID, ID, Username->valuestring));    // tao game moi
+                PlayerList[ID]->hostGame(gameID, newGame);  // cho nguoi choi vao game
+                newGame->hostIs(PlayerList[ID]);    // host la nguoi choi vua tao game
                 GameList.insert(pair<int, onlineGame>(gameID, newGame));
                 sendSystemInfo(ID, "WaitingForSomeoneJoining");
                 sendGameList(-1);
@@ -303,14 +363,13 @@ bool Server::Processinfo(int ID) {
                 return true;
             }
         } else if (type == "PlayAgain") {
-            if (PlayerList[ID]->AreYouInGame() >= 0) {
-                int HID = PlayerList[ID]->AreYouInGame();
-                std::cout << "booltest first" << std::endl;
-                GameList[HID]->booltest();
-                GameList[HID]->playAgain(ID);
-                int anotherPlayer = GameList[HID]->anotherPlayerID(ID);
-                if (anotherPlayer >= 0) {
-                    if (GameList[HID]->can_Play_again()) {
+            if (PlayerList[ID]->AreYouInGame() >= 0) {  // kiem tra xem nguoi choi co dang choi game nao khong
+                int HID = PlayerList[ID]->AreYouInGame();   // lay ID cua game dang choi
+                GameList[HID]->booltest();  // debug
+                GameList[HID]->playAgain(ID);   // player gui thong diep PlayAgain
+                int anotherPlayer = GameList[HID]->anotherPlayerID(ID); // lay ID cua doi thu
+                if (anotherPlayer >= 0) {   // neu doi thu trong Game
+                    if (GameList[HID]->can_Play_again()) {  // kiem tra xem co the choi lai khong
                         if (sendSystemInfo(ID, "PlayAgain") && sendSystemInfo(anotherPlayer, "PlayAgain"))
                             GameList[HID]->reset_play_again();
                     }
@@ -319,12 +378,10 @@ bool Server::Processinfo(int ID) {
             }
         } else if (type == "move") {
             if (PlayerList[ID]->AreYouInGame() >= 0) {
-                cout << "yes, I am in game" << endl;
-                int HID = PlayerList[ID]->AreYouInGame();
-                int anotherPlayer = GameList[HID]->anotherPlayerID(ID);
-                if (anotherPlayer >= 0) {
-                    cout << "yes, I have palyer" << endl;
-                    SendString(anotherPlayer, Message);
+                int HID = PlayerList[ID]->AreYouInGame();   // lay ID cua game dang choi
+                int anotherPlayer = GameList[HID]->anotherPlayerID(ID); // lay ID cua doi thu
+                if (anotherPlayer >= 0) {   // neu doi thu trong Game
+                    SendString(anotherPlayer, Message); // gui thong diep toi doi thu
                 }
             }
         } else if (type == "JoinRoomRequest") {

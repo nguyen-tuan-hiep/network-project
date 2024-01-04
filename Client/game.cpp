@@ -149,6 +149,10 @@ void game::register_user() {
                     QMessageBox::information(NULL, "Congratulation", "Register successfully!");
                     goto exitMesg;
                 }
+                else if (type == "System" && systemInfo == "SignUp_FAILED_UserExists"){
+                    QMessageBox::critical(NULL, "Error", "User already exists!");
+                    goto exitMesg;
+                }
                 else if(systemInfo == "SignUp_FAILED"){
                     QMessageBox::critical(NULL, "Error", "Failed to register!");
                     goto exitMesg;
@@ -1052,4 +1056,3 @@ void game::playAsBlackOnline()
     placeTheBoard();
     placePieces();
 }
-

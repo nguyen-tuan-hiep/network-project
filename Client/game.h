@@ -12,7 +12,7 @@
 #include "AI_files/possible_boxnpiece.h"
 #include "onlineGame/gamelobby.h"
 #include "onlineGame/onlinemove.h"
-#include "tablepagination.h"
+// #include "tablepagination.h"
 
 
 class game:public QGraphicsView
