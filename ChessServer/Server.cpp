@@ -673,6 +673,12 @@ int Server::CalculateElo(int playerA,int playerB, float result){
 void Server::UpdateElo(std::string nameElo, int gain){
     std::lock_guard<std::mutex> guard(mutexLock);
     QString name = QString::fromStdString(nameElo).split("#").at(0);
+    for (int i = 0; i < accList.size(); i++) {
+        if (accList[i].ID == name) {
+            accList[i].elo += gain;
+            break;
+        }
+    }
     SqlConnector connector;
     if(connector.openConnection()){
         qDebug() << "Connected to the database!";
@@ -681,7 +687,7 @@ void Server::UpdateElo(std::string nameElo, int gain){
         exit(66);
     }
     QSqlQuery query;
-    QString sQuery = "UPDATE accounts SET elo = elo + :value WHERE user_id = ':username';";
+    QString sQuery = "UPDATE accounts SET elo = elo + :value WHERE user_id = :username";
     query.prepare(sQuery);
     query.bindValue(":username",name);
     query.bindValue(":value",gain);
