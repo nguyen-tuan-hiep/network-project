@@ -63,48 +63,7 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
     serverptr = this;
     accList.clear();
     GetAllAccounts();
-    // get account from File
 
-    // get file path
-    // QFile file(":/accs.txt");
-    // if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //     std::cout << "Error: Failed to open the file accs.txt.";
-    //     exit(0);
-    // }
-    // QTextStream in(&file);
-    // if(!in.atEnd())
-    //     accsFilePath = in.readLine();
-    // file.close();
-    // if(accsFilePath.length() == 0) {
-    //     std::cout << "Error: You don't have account file path.";
-    //     exit(0);
-    // }
-    // file.setFileName(accsFilePath);
-    // if(file.exists()) {
-    //     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //         std::cout << "Error: Failed to open the file " << accsFilePath.toStdString();
-    //         exit(0);
-    //     }
-    //     bool isID = true;
-    //     Account tmpAcc;
-    //     while (!in.atEnd()) {
-    //         if(isID)
-    //             tmpAcc.ID = in.readLine();
-    //         else {
-    //             tmpAcc.PassW = in.readLine();
-    //             accList.push_back(tmpAcc);
-    //         }
-    //         isID = !isID;
-    //     }
-    // }
-    // else {
-    //     if (!file.open(QIODevice::WriteOnly)) {
-    //         std::cout << "Error: Failed to create the file " << accsFilePath.toStdString() << endl;
-    //         std::cout << file.error() << endl;
-    //         exit(0);
-    //     }
-    // }
-    // file.close();
 }
 
 bool Server::Signup(QString username, QString password, int elo){
