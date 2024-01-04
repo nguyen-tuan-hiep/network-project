@@ -107,20 +107,20 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
     // file.close();
 }
 
-bool Server::Signup(QString username, QString password, int elo){
+bool Server::Signup(QString username, QString password, int elo) {
     SqlConnector connector;
-    if(connector.openConnection()){
+    if (connector.openConnection()) {
         qDebug() << "Connected to the database!";
-    }else{
+    } else {
         qDebug() << "Cannot connect to the database!";
         exit(66);
     }
     QSqlQuery query;
     QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
     query.prepare(sQuery);
-    query.bindValue(":username",username);
-    query.bindValue(":password",password);
-    query.bindValue(":elo",elo);
+    query.bindValue(":username", username);
+    query.bindValue(":password", password);
+    query.bindValue(":elo", elo);
     if (query.exec()) {
         qDebug() << "Data inserted successfully.";
         return true;
@@ -132,12 +132,11 @@ bool Server::Signup(QString username, QString password, int elo){
     connector.closeConnection();
 }
 
-void Server::GetAllAccounts()
-{
+void Server::GetAllAccounts() {
     SqlConnector connector;
-    if(connector.openConnection()){
+    if (connector.openConnection()) {
         qDebug() << "Connected to the database!";
-    }else{
+    } else {
         qDebug() << "Cannot connect to the database!";
         exit(66);
     }
@@ -156,7 +155,6 @@ void Server::GetAllAccounts()
         tmpAcc.PassW = password;
         tmpAcc.elo = elo;
         accList.push_back(tmpAcc);
-
     }
     connector.closeConnection();
 }
@@ -186,9 +184,10 @@ void Server::sendMessToClients(string Message) {
          << Message << endl;
     unordered_map<int, int>::iterator it;
     for (it = Connections.begin(); it != Connections.end(); ++it) {
-        if (!SendString(it->first, Message))  // Send message to connection at index i, if message fails to be sent...
+        if (!SendString(it->first, Message)) {  // Send message to connection at index i, if message fails to be sent...
             cout << "Failed to send message to client ID: " << it->first << endl;
-        log("Failed to send message to client ID: " + std::to_string(it->first));
+            log("Failed to send message to client ID: " + std::to_string(it->first));
+        }
     }
 }
 
@@ -241,14 +240,13 @@ bool Server::Processinfo(int ID) {
             QString reg_ID = user_ID_Json->valuestring;
             QString reg_PW = user_PW_Json->valuestring;
             int reg_ELO = user_Elo_Json->valueint;
-            if(Signup(reg_ID, reg_PW, reg_ELO)){
-                sendSystemInfo(ID,"SignUp_SUCCESS");
+            if (Signup(reg_ID, reg_PW, reg_ELO)) {
+                sendSystemInfo(ID, "SignUp_SUCCESS");
                 accList.push_back(Account(reg_ID, reg_PW, reg_ELO));
-            }else{
-                sendSystemInfo(ID,"SignUp_FAILED");
+            } else {
+                sendSystemInfo(ID, "SignUp_FAILED");
             }
-        }
-        else if (type == "LogIn") {
+        } else if (type == "LogIn") {
             cJSON *user_ID_Json;
             user_ID_Json = cJSON_GetObjectItem(json, "ID");
             cJSON *user_PW_Json;
@@ -267,8 +265,8 @@ bool Server::Processinfo(int ID) {
                     break;
                 }
             }
-            if (flag>-1) {
-                sendSystemInfo(ID, "LogIn_SUCCESS","elo",std::to_string(accList[flag].elo));
+            if (flag > -1) {
+                sendSystemInfo(ID, "LogIn_SUCCESS", "elo", std::to_string(accList[flag].elo));
                 string MOTD = "MOTD: Welcome! This is the message of the day!.";
                 SendString(ID, MOTD);
                 sendGameList(ID);
@@ -353,10 +351,9 @@ bool Server::Processinfo(int ID) {
                 PlayerList[ID]->JoininGame(gameID, GameList[gameID]);
                 sendGameList(-1);
                 int hostID = GameList[gameID]->hostsID();
-                sendSystemInfo(hostID, "HostStartPlaying","Name_Info" , GameList[gameID]->p2Name );
-                if (sendSystemInfo(ID, "JoinRoom", "Name_Info", GameList[gameID]->hostName)){
+                sendSystemInfo(hostID, "HostStartPlaying", "Name_Info", GameList[gameID]->p2Name);
+                if (sendSystemInfo(ID, "JoinRoom", "Name_Info", GameList[gameID]->hostName)) {
                     sendSystemInfo(hostID, "SomeoneJoin_Successfully");
-
                 }
             }
         } else if (type == "BackToLobby") {
@@ -398,14 +395,14 @@ bool Server::Processinfo(int ID) {
                  << JsonToSend << " To: " << ID << endl;
             string Send(JsonToSend);
             SendString(ID, Send);
-        } else if (type == "Exit"){
+        } else if (type == "Exit") {
             return false;
-        }else if (type == "GetTopRanking") {
+        } else if (type == "GetTopRanking") {
             QString res = "";
             SqlConnector connector;
-            if(connector.openConnection()){
+            if (connector.openConnection()) {
                 qDebug() << "Connected to the database!";
-            }else{
+            } else {
                 qDebug() << "Cannot connect to the database!";
                 exit(66);
             }
@@ -494,8 +491,8 @@ bool Server::sendSystemInfo(int ID, string InfoType, string addKey, string addVa
     cJSON_AddStringToObject(json, "Type", "System");
     cJSON_AddStringToObject(json, "System_Info", InfoType.c_str());
 
-    if(addKey!=""){
-        cJSON_AddStringToObject(json,addKey.c_str(),addValue.c_str());
+    if (addKey != "") {
+        cJSON_AddStringToObject(json, addKey.c_str(), addValue.c_str());
     }
 
     char *JsonToSend = cJSON_Print(json);
