@@ -135,6 +135,11 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     connect(showChatBtn,SIGNAL(clicked()) , this , SLOT(ShowChatRoom()));
     OnlineScene->addItem(showChatBtn);
 
+    // refreshBtn = new button("Refresh Scene");
+    // refreshBtn->setPos(1000,750);
+    // connect(refreshBtn,SIGNAL(clicked()) , this , SLOT(Refresh()));
+    // OnlineScene->addItem(refreshBtn);
+
     OnlineScene->addItem(createRankingWidget());
 
     hostWindow();
@@ -557,6 +562,7 @@ bool gameLobby::GetString()
         json_result = cJSON_GetObjectItem(json, "elo");
         int result = json_result->valueint;
         id_elo += result;
+        recent_elo = result;
         cJSON_Delete(json);
     }
     else if (type == "System")

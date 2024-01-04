@@ -877,6 +877,18 @@ void game::gameOver(int color)
         connect(ReturnButton, SIGNAL(clicked()),this,SLOT(mainmenu()));
         addToScene(ReturnButton);
     }
+    QThread::msleep(500);
+    if (onlineGame) {
+        QGraphicsTextItem *eloGained = new QGraphicsTextItem();
+        eloGained->setPlainText("You have gained: " + QString::number(Lobby->recent_elo) + " ELO points!");
+        QFont titleFont("arial" , 20);
+        eloGained->setFont( titleFont);
+        eloGained->setPos(width()/2 - eloGained->boundingRect().width()/2, 350);
+        eloGained->setZValue(5);
+        addToScene(eloGained);
+
+
+    }
 }
 
 void game::delay()

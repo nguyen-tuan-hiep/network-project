@@ -48,7 +48,7 @@ public:
     bool backToLobby();
     QString id_id;
     int id_elo;
-
+    int recent_elo = 0;
 signals:
     void updateRooms(cJSON *Lists);
     void socketClosed();
