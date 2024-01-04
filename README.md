@@ -21,7 +21,8 @@ expected score=1/2.413=0.414
 32 * (1−0.414)=11.7
 
 ### Final formula
-K * (1 - 1/(1+10 ^ (Loser_elo - Winner_elo / 400)))
+elo for A : K * (result - 1/(1+10 ^ (B_elo - A_elo / 400)))
+elo for B : K * (result - 1/(1+10 ^ (A_elo - B_elo / 400)))
 
 ### K-factor
 K = 32      below 2100
