@@ -17,7 +17,8 @@
 #include "cJSON/cJSON.h"
 #include <thread>
 #include <QVector>
-#include "SqlConnector.h"
+#include "sqlconnector.h"
+#include <mutex>
 
 //typedef std::vector<std::vector<unique_ptr>> BOARD;
 
@@ -58,6 +59,10 @@ private:
     void ClientHandlerThread(int arg);
     void GetAllAccounts();
     bool Signup(QString username, QString password, int elo);
+    int NameToElo(string);
+    int CalculateElo(int playerA,int playerB, float result);
+    void UpdateElo(string, int);
+    QString GetTopRanking();
 
 private:
 	//-------------------------------------------
@@ -80,6 +85,7 @@ private:
     std::thread threadList[512];
     QVector<Account> accList;
     QString accsFilePath;
+    std::mutex mutexLock;
 };
 
 static Server * serverptr; 

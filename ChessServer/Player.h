@@ -43,10 +43,11 @@ public:
 	{
 		return GameID;
 	}
+    bool ishost = false;
 private:
 	int id;
 	int GameID = -1;
 	onlineGame game = NULL;
-	bool ishost = false;
+
 	bool ingame = false;
 };

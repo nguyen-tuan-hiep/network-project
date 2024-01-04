@@ -108,6 +108,7 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
 }
 
 bool Server::Signup(QString username, QString password, int elo){
+    std::lock_guard<std::mutex> guard(mutexLock);
     SqlConnector connector;
     if(connector.openConnection()){
         qDebug() << "Connected to the database!";
@@ -401,25 +402,8 @@ bool Server::Processinfo(int ID) {
         } else if (type == "Exit"){
             return false;
         }else if (type == "GetTopRanking") {
-            QString res = "";
-            SqlConnector connector;
-            if(connector.openConnection()){
-                qDebug() << "Connected to the database!";
-            }else{
-                qDebug() << "Cannot connect to the database!";
-                exit(66);
-            }
-            QSqlQuery query = connector.executeQuery("SELECT * FROM accounts ORDER BY elo DESC LIMIT 50;");
-            while (query.next()) {
-                QString user_id = query.value(0).toString();
-                int elo = query.value(2).toInt();
+            QString res = GetTopRanking();
 
-                qDebug() << "USER ID: " << user_id;
-                qDebug() << "ELO: " << elo;
-
-                res += (user_id + "#" + QString::number(elo) + ",");
-            }
-            connector.closeConnection();
             cJSON *json = cJSON_CreateObject();
             cJSON_AddStringToObject(json, "Type", "GetTopRanking");
             cJSON_AddStringToObject(json, "Response", res.toStdString().c_str());
@@ -429,11 +413,71 @@ bool Server::Processinfo(int ID) {
                  << JsonToSend << " To: " << ID << endl;
             string Send(JsonToSend);
             SendString(ID, Send);
+        }else if (type == "EndGame"){
+            cJSON *json_result = cJSON_GetObjectItem(json,"Winner");
+            int eloA, eloB;
+            int result = json_result->valueint;
+            int HID = PlayerList[ID]->AreYouInGame();
+            if (HID >= 0) {
+                int anotherPlayer = GameList[HID]->anotherPlayerID(ID);
+                if (anotherPlayer >= 0) {
+                    float res;
+                    std::string name;
+                    if(result == 2) res = 0.5;
+                    if(PlayerList[ID]->ishost){
+                        name = GameList[HID]->hostName;
+                        eloA = NameToElo(name);
+
+                        eloB = NameToElo(GameList[HID]->p2Name);
+                        res = result;
+                    }else{
+                        name = GameList[HID]->p2Name;
+                        eloA = NameToElo(name);
+                        eloB = NameToElo(GameList[HID]->hostName);
+                        if(result == 0) res = 1;
+                        else if (result == 1) res = 0;
+                    }
+                    int gain = CalculateElo(eloA, eloB, res);
+                    cJSON *json = cJSON_CreateObject();
+                    cJSON_AddStringToObject(json, "Type", "Result");
+                    cJSON_AddNumberToObject(json, "elo", gain);
+                    char *JsonToSend = cJSON_Print(json);
+                    cJSON_Delete(json);
+                    cout << "send:" << endl
+                         << JsonToSend << " To: " << ID << endl;
+                    string Send(JsonToSend);
+                    SendString(ID, Send);
+                    UpdateElo(name, gain);
+                }
+
+            }
         }
     }
     cout << "Processed chat message packet from user ID: " << ID << endl;
     cJSON_Delete(json);
     return true;
+}
+
+
+QString Server::GetTopRanking(){
+    std::lock_guard<std::mutex> guard(mutexLock);
+    QString res = "";
+    SqlConnector connector;
+    if(connector.openConnection()){
+        qDebug() << "Connected to the database!";
+    }else{
+        qDebug() << "Cannot connect to the database!";
+        exit(66);
+    }
+    QSqlQuery query = connector.executeQuery("SELECT * FROM accounts ORDER BY elo DESC LIMIT 50;");
+    while (query.next()) {
+        QString user_id = query.value(0).toString();
+        int elo = query.value(2).toInt();
+
+        res += (user_id + "#" + QString::number(elo) + ",");
+    }
+    connector.closeConnection();
+    return res;
 }
 
 bool Server::CreateGameList(string &_string) {
@@ -554,4 +598,46 @@ void Server::ClientHandlerThread(int ID)  // ID = the index in the SOCKET Connec
     serverptr->PlayerList.erase(ID);
     serverptr->Connections.erase(ID);
     serverptr->TotalConnections -= 1;
+}
+
+int Server::NameToElo(std::string name){
+    QString elo = QString::fromStdString(name).split("#").at(1);
+    return elo.toInt();
+}
+
+int Server::CalculateElo(int playerA,int playerB, float result){
+    int K;
+    if(playerA<2100)
+        K = 32;
+    else if(playerA < 2400) K = 24;
+    else K = 16;
+
+
+    return round( K * (result - 1 / (1+std::pow(10, (playerB - playerA) / 400))));
+}
+
+void Server::UpdateElo(std::string nameElo, int gain){
+    std::lock_guard<std::mutex> guard(mutexLock);
+    QString name = QString::fromStdString(nameElo).split("#").at(0);
+    SqlConnector connector;
+    if(connector.openConnection()){
+        qDebug() << "Connected to the database!";
+    }else{
+        qDebug() << "Cannot connect to the database!";
+        exit(66);
+    }
+    QSqlQuery query;
+    QString sQuery = "UPDATE accounts SET elo = elo + :value WHERE user_id = ':username';";
+    query.prepare(sQuery);
+    query.bindValue(":username",name);
+    query.bindValue(":value",gain);
+    if (query.exec()) {
+        qDebug() << "Data updated successfully.";
+        return;
+    } else {
+        qDebug() << "Error executing query:";
+        qDebug() << query.lastError().text();
+        return;
+    }
+    connector.closeConnection();
 }
