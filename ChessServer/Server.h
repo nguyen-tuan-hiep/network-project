@@ -32,9 +32,10 @@ struct Account {
     int elo;
     bool login = false;
     Account() {};
-    Account(QString id, QString pw) {
+    Account(QString id, QString pw, int elo) {
         ID = id;
         PassW = pw;
+        elo = elo;
     }
 };
 

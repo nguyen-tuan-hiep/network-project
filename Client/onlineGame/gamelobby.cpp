@@ -114,6 +114,7 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     getOnUserBtn->setPos(50,200);
     connect(getOnUserBtn,SIGNAL(clicked()) , this , SLOT(GetOnlineUser()));
     OnlineScene->addItem(getOnUserBtn);
+
     createRoomBtn = new button("Create a Game Room");
     createRoomBtn->setPos(400,750);
     connect(createRoomBtn,SIGNAL(clicked()) , this , SLOT(CreateAGameRoom()));
@@ -123,6 +124,9 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     showChatBtn->setPos(700,750);
     connect(showChatBtn,SIGNAL(clicked()) , this , SLOT(ShowChatRoom()));
     OnlineScene->addItem(showChatBtn);
+
+    OnlineScene->addItem(createRankingWidget());
+
     hostWindow();
     LobbySUI();
     chRoom->show();
@@ -136,6 +140,77 @@ gameLobby::~gameLobby()
     if(t2.joinable())
         t2.join();
 }
+
+QStringList gameLobby::getTopRanking(){
+    cJSON * Mesg;
+    Mesg = cJSON_CreateObject();
+    cJSON_AddStringToObject(Mesg,"Type","GetTopRanking");
+    char *JsonToSend = cJSON_Print(Mesg);
+    cJSON_Delete(Mesg);
+    QStringList rankingList;
+    if(send(Connection, JsonToSend, MAXSIZE, NULL)<0){
+        QMessageBox::critical(NULL,"Error", "Cannot send GetTopRanking message!");
+        return rankingList;
+    }else{
+        char buffer[MAXSIZE];
+        int RetnCheck = recv(Connection, buffer, sizeof(buffer), NULL);
+        if (RetnCheck < 0){
+            QMessageBox::critical(NULL,"Error", "Cannot recv GetTopRanking message!");
+            return rankingList;
+        }
+        cJSON *json, *json_type;
+        json = cJSON_Parse(buffer);
+        json_type = cJSON_GetObjectItem(json , "Type");
+        std::string type = json_type->valuestring;
+        if(type == "GetTopRanking"){
+            cJSON *System_Info;
+            System_Info = cJSON_GetObjectItem(json, "Response");
+            rankingList = QString::fromStdString(System_Info->valuestring).split(",");
+            cJSON_Delete(json);
+            return rankingList;
+        }
+        else{
+            QMessageBox::critical(NULL,"Error", "Recv wrong message!");
+            return rankingList;
+        }
+    }
+}
+
+QGraphicsProxyWidget *gameLobby::createRankingWidget(){
+    QStringList rankingList = getTopRanking();
+    QTableWidget *tableWidget = new QTableWidget(0, 2); // 2 columns
+    QStringList headers;
+    headers << "User ID" << "ELO";
+    tableWidget->setHorizontalHeaderLabels(headers);
+    tableWidget->setRowCount(rankingList.size());
+    for (int row = 0; row < rankingList.size(); ++row) {
+        // Assuming each string is one row, split it for two columns
+        QStringList columns = rankingList.at(row).split("#"); // Adjust the delimiter as needed
+        for (int col = 0; col < columns.size(); ++col) {
+            tableWidget->setItem(row, col, new QTableWidgetItem(columns.at(col)));
+        }
+    }
+
+    QLabel *titleLabel = new QLabel("Top 50");
+    QFont titleFont("arial" , 20);
+    titleLabel->setFont(titleFont);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(titleLabel);
+    layout->addWidget(tableWidget);
+
+
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(layout);
+
+    QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget;
+    proxyWidget->setWidget(widget);
+    proxyWidget->setPos(1100, 20);
+    return proxyWidget;
+}
+
+
 
 bool gameLobby::requestLogIn(QString id, QString pw) {
     cJSON * Mesg;
@@ -163,7 +238,6 @@ bool gameLobby::requestLogIn(QString id, QString pw) {
                 systemInfo = json_System_Info->valuestring;
             }
             cJSON_Delete(json);
-            qDebug() << QString::fromStdString(type) << " " << QString::fromStdString(systemInfo);
             if (type == "System" && systemInfo == "LogIn_SUCCESS")
                 return true;
             if(systemInfo == "LogIn_FAILED_ID_PW") QMessageBox::critical(NULL, "Error", "Failed to Log In!\nIncorrect ID or password");
@@ -398,9 +472,6 @@ bool gameLobby::CreateRoom(const std::string &user)
     int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
     if (RetnCheck < 0)
         return false;
-    //TO DO:
-    //waiting for others
-    //inplay
     return true;
 }
 
@@ -433,16 +504,7 @@ bool gameLobby::GetString()
 	}
     else if (type == "List_of_Rooms")
     {
-        //get list;
-        //cJSON *List;
-        //List = cJSON_GetObjectItem(json, "List");
-        //if (!List)
-
-        //If you are not good at Qt, you must remember, never use threads except the main thread to create an item for UI.
-        // you must use signals and slots
-
         emit updateRooms(json);
-        //createRoomsList(List);
     }
     else if (type == "move")
     {
@@ -466,8 +528,11 @@ bool gameLobby::GetString()
         cJSON *System_Info;
         System_Info = cJSON_GetObjectItem(json, "Response");
         QStringList onlineStr = QString::fromStdString(System_Info->valuestring).split(",");
-        for(auto s : onlineStr)
-            onlineUserList->appendRow(new QStandardItem(s));
+        for(auto s : onlineStr){
+            QStandardItem *item = new QStandardItem(s);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            onlineUserList->appendRow(item);
+        }
         cJSON_Delete(json);
     }
     else if (type == "System")

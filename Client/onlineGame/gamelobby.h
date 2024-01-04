@@ -20,6 +20,7 @@
 #include "cJSON/cJSON.h"
 #include "onlinemove.h"
 #include "button.h"
+#include "tablepagination.h"
 
 class ChessRoom;
 class Chatroom;
@@ -118,6 +119,8 @@ public slots:
     void GetOnlineUser();
     void CreateAGameRoom();
     void ShowChatRoom();
+    QStringList getTopRanking();
+    QGraphicsProxyWidget *createRankingWidget();
 };
 
 

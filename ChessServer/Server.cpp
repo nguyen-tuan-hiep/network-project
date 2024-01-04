@@ -243,29 +243,10 @@ bool Server::Processinfo(int ID) {
             int reg_ELO = user_Elo_Json->valueint;
             if(Signup(reg_ID, reg_PW, reg_ELO)){
                 sendSystemInfo(ID,"SignUp_SUCCESS");
+                accList.push_back(Account(reg_ID, reg_PW, reg_ELO));
             }else{
                 sendSystemInfo(ID,"SignUp_FAILED");
             }
-
-            // bool flag = false;
-            // for(int i = 0; i < accList.size(); i++)
-            //     if(accList[i].ID == reg_ID ) {
-            //         flag = true;
-            //         break;
-            //     }
-            // if(!flag) {
-            //     accList.push_back(Account(reg_ID, reg_PW));
-            //     // QFile file(accsFilePath);
-            //     // if (!file.open(QIODevice::Append | QIODevice::Text))
-            //     //     std::cout << "Failed to open file for writing\n";
-            //     // else {
-            //     //     QTextStream out(&file);
-            //     //     out << reg_ID << Qt::endl << reg_PW << Qt::endl;
-            //     //     file.close();
-            //     // }
-            // }else{
-            //     sendSystemInfo(ID, "SignUp")
-            // }
         }
         else if (type == "LogIn") {
             cJSON *user_ID_Json;
@@ -415,8 +396,39 @@ bool Server::Processinfo(int ID) {
                  << JsonToSend << " To: " << ID << endl;
             string Send(JsonToSend);
             SendString(ID, Send);
-        } else if (type == "Exit")
+        } else if (type == "Exit"){
             return false;
+        }else if (type == "GetTopRanking") {
+            QString res = "";
+            SqlConnector connector;
+            if(connector.openConnection()){
+                qDebug() << "Connected to the database!";
+            }else{
+                qDebug() << "Cannot connect to the database!";
+                exit(66);
+            }
+            QSqlQuery query = connector.executeQuery("SELECT * FROM accounts ORDER BY elo DESC LIMIT 50;");
+            while (query.next()) {
+                QString user_id = query.value(0).toString();
+                QString password = query.value(1).toString();
+                int elo = query.value(2).toInt();
+
+                qDebug() << "USER ID: " << user_id;
+                qDebug() << "ELO: " << elo;
+
+                res += (user_id + "#" + QString::number(elo) + ",");
+            }
+            connector.closeConnection();
+            cJSON *json = cJSON_CreateObject();
+            cJSON_AddStringToObject(json, "Type", "GetTopRanking");
+            cJSON_AddStringToObject(json, "Response", res.toStdString().c_str());
+            char *JsonToSend = cJSON_Print(json);
+            cJSON_Delete(json);
+            cout << "send:" << endl
+                 << JsonToSend << " To: " << ID << endl;
+            string Send(JsonToSend);
+            SendString(ID, Send);
+        }
     }
     cout << "Processed chat message packet from user ID: " << ID << endl;
     cJSON_Delete(json);

@@ -66,7 +66,8 @@ HEADERS += \
     onlineGame/message.h \
     onlineGame/onlinemove.h \
     onlineGame/gamelobby.h \
-    cJSON/cJSON.h
+    cJSON/cJSON.h \
+    tablepagination.h
 
 FORMS += \
     mainwindow.ui

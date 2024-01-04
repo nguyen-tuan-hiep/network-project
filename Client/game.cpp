@@ -145,19 +145,23 @@ void game::register_user() {
                 qDebug() << QString::fromStdString(type) << " " << QString::fromStdString(systemInfo);
                 if (type == "System" && systemInfo == "SignUp_SUCCESS"){
                     QMessageBox::information(NULL, "Congratulation", "Register successfully!");
-                    ::close(socfd);
-                    return;
+                    goto exitMesg;
                 }
                 else if(systemInfo == "SignUp_FAILED"){
                     QMessageBox::critical(NULL, "Error", "Failed to register!");
-                    ::close(socfd);
-                    return;
+                    goto exitMesg;
                 }
             }
             QThread::msleep(100);
         }
 
         QMessageBox::critical(NULL, "Error", "Log In timeout!");
+        exitMesg:
+        Mesg=cJSON_CreateObject();
+        cJSON_AddStringToObject(Mesg,"Type","Exit");
+        JsonToSend = cJSON_Print(Mesg);
+        cJSON_Delete(Mesg);
+        send(socfd, JsonToSend, 512, NULL);
         ::close(socfd);
 
     }
