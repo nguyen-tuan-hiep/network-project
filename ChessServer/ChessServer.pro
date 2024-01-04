@@ -17,15 +17,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     Server.cpp \
-    SqlConnector.cpp \
-    cJSON/cJSON.c
+    cJSON/cJSON.c \
+    sqlconnector.cpp
 
 HEADERS += \
     Games.h \
     Player.h \
     Server.h \
-    SqlConnector.h \
-    cJSON/cJSON.h
+    cJSON/cJSON.h \
+    sqlconnector.h
 
 RESOURCES += \
     res.qrc
