@@ -32,10 +32,10 @@ struct Account {
     int elo;
     bool login = false;
     Account() {};
-    Account(QString id, QString pw, int elo) {
+    Account(QString id, QString pw, int e) {
         ID = id;
         PassW = pw;
-        elo = elo;
+        elo = e;
     }
 };
 
@@ -51,7 +51,7 @@ private:
 	void sendMessToClients(string Message);
 	bool Processinfo(int ID);
 	bool CreateGameList(string & _string);
-	bool sendSystemInfo(int ID, string InfoType);
+    bool sendSystemInfo(int ID, string InfoType, string addKey="", string addValue="");
 	bool sendGameList(int ID); // if ID <0 ,means send gamelist to all clients
 	void deleteGame(int ID);
 

@@ -369,3 +369,582 @@ Error code: 48
 [2024-01-04 11:27:33] Lost connection to client ID: 5
 [2024-01-04 11:27:33] Delete its game room: 
 [2024-01-04 11:27:33] Failed to send message to client ID: 5
+[2024-01-04 11:34:07] Client Connected! ID:8
+[2024-01-04 11:34:07] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 8
+[2024-01-04 11:34:10] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 8
+[2024-01-04 11:34:10] Failed to send message to client ID: 8
+[2024-01-04 11:34:18] Client Connected! ID:9
+[2024-01-04 11:34:18] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 9
+[2024-01-04 11:34:24] got Join room request from ID: 6
+[2024-01-04 11:34:24] Failed to send message to client ID: 9
+[2024-01-04 11:34:24] Failed to send message to client ID: 8
+[2024-01-04 11:34:24] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying"
+} To: 8
+[2024-01-04 11:34:24] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom"
+} To: 9
+[2024-01-04 11:34:24] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 8
+[2024-01-04 11:35:07] Failed to send message to client ID: 9
+[2024-01-04 11:35:07] Failed to send message to client ID: 8
+[2024-01-04 12:28:55] Lost connection to client ID: 9
+[2024-01-04 12:28:55] Delete its game room: 
+[2024-01-04 12:28:55] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 8
+[2024-01-04 12:28:55] Failed to send message to client ID: 9
+[2024-01-04 12:28:55] Failed to send message to client ID: 8
+[2024-01-04 12:29:04] Lost connection to client ID: 8
+[2024-01-04 12:29:16] Client Connected! ID:10
+[2024-01-04 12:29:16] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 10
+[2024-01-04 12:29:18] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 10
+[2024-01-04 12:29:18] Failed to send message to client ID: 10
+[2024-01-04 12:29:38] Client Connected! ID:11
+[2024-01-04 12:29:38] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 11
+[2024-01-04 12:29:40] got Join room request from ID: 7
+[2024-01-04 12:29:40] Failed to send message to client ID: 11
+[2024-01-04 12:29:40] Failed to send message to client ID: 10
+[2024-01-04 12:29:40] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying"
+} To: 10
+[2024-01-04 12:29:40] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom"
+} To: 11
+[2024-01-04 12:29:40] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 10
+[2024-01-04 12:48:46] Lost connection to client ID: 10
+[2024-01-04 12:48:46] Delete its game room: 
+[2024-01-04 12:48:46] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 11
+[2024-01-04 12:48:46] Failed to send message to client ID: 11
+[2024-01-04 12:48:46] Failed to send message to client ID: 10
+[2024-01-04 12:48:52] Lost connection to client ID: 11
+[2024-01-04 12:50:08] Client Connected! ID:12
+[2024-01-04 12:50:08] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 12
+[2024-01-04 12:50:10] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 12
+[2024-01-04 12:50:10] Failed to send message to client ID: 12
+[2024-01-04 12:50:20] Client Connected! ID:13
+[2024-01-04 12:50:20] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 13
+[2024-01-04 12:50:21] got Join room request from ID: 8
+[2024-01-04 12:50:21] Failed to send message to client ID: 13
+[2024-01-04 12:50:21] Failed to send message to client ID: 12
+[2024-01-04 12:50:21] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying"
+} To: 12
+[2024-01-04 12:50:21] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom"
+} To: 13
+[2024-01-04 12:50:21] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 12
+[2024-01-04 12:51:24] Lost connection to client ID: 12
+[2024-01-04 12:51:24] Delete its game room: 
+[2024-01-04 12:51:24] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 13
+[2024-01-04 12:51:24] Failed to send message to client ID: 13
+[2024-01-04 12:51:24] Failed to send message to client ID: 12
+[2024-01-04 12:51:32] Lost connection to client ID: 13
+[2024-01-04 13:34:00] Client Connected! ID:0
+[2024-01-04 13:34:00] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 0
+[2024-01-04 13:35:09] Failed to send message to client ID: 0
+[2024-01-04 13:35:09] Processed chat message packet from user ID: 0
+[2024-01-04 13:35:09] Lost connection to client ID: 0
+[2024-01-04 13:35:27] Client Connected! ID:1
+[2024-01-04 13:35:27] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 1
+[2024-01-04 13:35:29] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 1
+[2024-01-04 13:35:29] Failed to send message to client ID: 1
+[2024-01-04 13:35:38] Client Connected! ID:2
+[2024-01-04 13:35:38] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 2
+[2024-01-04 13:35:41] got Join room request from ID: 0
+[2024-01-04 13:35:41] Failed to send message to client ID: 2
+[2024-01-04 13:35:41] Failed to send message to client ID: 1
+[2024-01-04 13:35:41] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying"
+} To: 1
+[2024-01-04 13:35:41] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom"
+} To: 2
+[2024-01-04 13:35:41] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully",
+	"Name_Info":	"testacc,testacc2"
+} To: 1
+[2024-01-04 13:35:41] Lost connection to client ID: 1
+[2024-01-04 13:35:41] Failed to send message to client ID: 2
+[2024-01-04 13:35:41] Delete its game room: 
+[2024-01-04 13:35:41] Failed to send message to client ID: 1
+[2024-01-04 13:35:41] Processed chat message packet from user ID: 2
+[2024-01-04 13:35:41] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 2
+[2024-01-04 13:35:41] Lost connection to client ID: 2
+[2024-01-04 13:35:41] Failed to send message to client ID: 2
+[2024-01-04 13:37:48] Failed to bind the address to our listening socket. 1111
+Error code: 48
+[2024-01-04 13:38:08] Client Connected! ID:0
+[2024-01-04 13:38:08] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 0
+[2024-01-04 13:38:12] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 0
+[2024-01-04 13:38:12] Failed to send message to client ID: 0
+[2024-01-04 13:38:26] Client Connected! ID:1
+[2024-01-04 13:38:26] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 1
+[2024-01-04 13:38:28] got Join room request from ID: 0
+[2024-01-04 13:38:28] Failed to send message to client ID: 1
+[2024-01-04 13:38:28] Failed to send message to client ID: 0
+[2024-01-04 13:38:28] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying"
+} To: 0
+[2024-01-04 13:38:28] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom"
+} To: 1
+[2024-01-04 13:38:28] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully",
+	"Name_Info":	"testacc,testacc2"
+} To: 0
+[2024-01-04 13:38:28] Failed to send message to client ID: 1
+[2024-01-04 13:38:28] Failed to send message to client ID: 0
+[2024-01-04 13:38:28] Lost connection to client ID: 0
+[2024-01-04 13:38:28] Processed chat message packet from user ID: 1
+[2024-01-04 13:38:28] Delete its game room: 
+[2024-01-04 13:38:28] Lost connection to client ID: 1
+[2024-01-04 13:38:28] Delete its game room: 
+[2024-01-04 13:38:28] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 0
+[2024-01-04 13:38:28] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 1
+[2024-01-04 13:38:28] Failed to send message to client ID: 1
+[2024-01-04 13:38:28] Failed to send message to client ID: 1
+[2024-01-04 13:38:28] Failed to send message to client ID: 0
+[2024-01-04 13:38:28] Failed to send message to client ID: 0
+[2024-01-04 13:43:28] Client Connected! ID:0
+[2024-01-04 13:43:28] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 0
+[2024-01-04 13:43:30] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 0
+[2024-01-04 13:43:30] Failed to send message to client ID: 0
+[2024-01-04 13:43:39] Client Connected! ID:1
+[2024-01-04 13:43:39] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 1
+[2024-01-04 13:43:41] got Join room request from ID: 0
+[2024-01-04 13:43:41] Failed to send message to client ID: 1
+[2024-01-04 13:43:41] Failed to send message to client ID: 0
+[2024-01-04 13:43:41] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc,testacc2"
+} To: 0
+[2024-01-04 13:43:41] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc2,testacc"
+} To: 1
+[2024-01-04 13:43:41] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 0
+[2024-01-04 13:44:10] Lost connection to client ID: 0
+[2024-01-04 13:44:10] Delete its game room: 
+[2024-01-04 13:44:10] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 1
+[2024-01-04 13:44:10] Failed to send message to client ID: 1
+[2024-01-04 13:44:10] Failed to send message to client ID: 0
+[2024-01-04 13:44:19] Lost connection to client ID: 1
+[2024-01-04 13:50:51] Client Connected! ID:2
+[2024-01-04 13:50:51] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 2
+[2024-01-04 13:50:53] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 2
+[2024-01-04 13:50:53] Failed to send message to client ID: 2
+[2024-01-04 13:51:03] Client Connected! ID:3
+[2024-01-04 13:51:03] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 3
+[2024-01-04 13:51:04] got Join room request from ID: 1
+[2024-01-04 13:51:04] Failed to send message to client ID: 3
+[2024-01-04 13:51:04] Failed to send message to client ID: 2
+[2024-01-04 13:51:04] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc,testacc2"
+} To: 2
+[2024-01-04 13:51:04] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc2,testacc"
+} To: 3
+[2024-01-04 13:51:04] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 2
+[2024-01-04 13:52:49] Failed to send message to client ID: 3
+[2024-01-04 13:52:49] Failed to send message to client ID: 2
+[2024-01-04 13:52:49] Processed chat message packet from user ID: 3
+[2024-01-04 13:52:49] Lost connection to client ID: 3
+[2024-01-04 13:52:49] Delete its game room: 
+[2024-01-04 13:52:49] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 2
+[2024-01-04 13:52:49] Failed to send message to client ID: 3
+[2024-01-04 13:52:49] Failed to send message to client ID: 2
+[2024-01-04 13:52:51] Failed to send message to client ID: 2
+[2024-01-04 13:52:51] Processed chat message packet from user ID: 2
+[2024-01-04 13:52:51] Lost connection to client ID: 2
+[2024-01-04 13:53:26] Client Connected! ID:0
+[2024-01-04 13:53:26] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 0
+[2024-01-04 13:53:29] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 0
+[2024-01-04 13:53:29] Failed to send message to client ID: 0
+[2024-01-04 13:53:38] Client Connected! ID:1
+[2024-01-04 13:53:38] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 1
+[2024-01-04 13:53:40] got Join room request from ID: 0
+[2024-01-04 13:53:40] Failed to send message to client ID: 1
+[2024-01-04 13:53:40] Failed to send message to client ID: 0
+[2024-01-04 13:53:40] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc,testacc2"
+} To: 0
+[2024-01-04 13:53:40] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc,testacc2"
+} To: 1
+[2024-01-04 13:53:40] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 0
+[2024-01-04 13:54:45] Lost connection to client ID: 0
+[2024-01-04 13:54:45] Delete its game room: 
+[2024-01-04 13:54:45] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 1
+[2024-01-04 13:54:45] Failed to send message to client ID: 1
+[2024-01-04 13:54:45] Failed to send message to client ID: 0
+[2024-01-04 14:28:09] Lost connection to client ID: 1
+[2024-01-04 14:28:34] Client Connected! ID:2
+[2024-01-04 14:28:34] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS"
+} To: 2
+[2024-01-04 14:28:34] Lost connection to client ID: 2
+[2024-01-04 14:33:06] Client Connected! ID:0
+[2024-01-04 14:33:06] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 0
+[2024-01-04 14:33:06] Lost connection to client ID: 0
+[2024-01-04 14:34:30] Client Connected! ID:1
+[2024-01-04 14:34:30] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 1
+[2024-01-04 14:34:30] Lost connection to client ID: 1
+[2024-01-04 14:35:44] Client Connected! ID:2
+[2024-01-04 14:35:44] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 2
+[2024-01-04 14:35:44] Lost connection to client ID: 2
+[2024-01-04 14:36:46] Client Connected! ID:3
+[2024-01-04 14:36:46] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 3
+[2024-01-04 14:36:46] Lost connection to client ID: 3
+[2024-01-04 14:38:00] Client Connected! ID:4
+[2024-01-04 14:38:00] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 4
+[2024-01-04 14:38:35] Lost connection to client ID: 4
+[2024-01-04 14:38:38] Client Connected! ID:5
+[2024-01-04 14:38:38] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 5
+[2024-01-04 14:42:14] Failed to send message to client ID: 5
+[2024-01-04 14:42:14] Processed chat message packet from user ID: 5
+[2024-01-04 14:42:14] Lost connection to client ID: 5
+[2024-01-04 14:44:02] Client Connected! ID:6
+[2024-01-04 14:44:02] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 6
+[2024-01-04 14:44:05] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 6
+[2024-01-04 14:44:05] Failed to send message to client ID: 6
+[2024-01-04 14:44:16] Client Connected! ID:7
+[2024-01-04 14:44:16] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1600"
+} To: 7
+[2024-01-04 14:44:19] got Join room request from ID: 0
+[2024-01-04 14:44:19] Failed to send message to client ID: 7
+[2024-01-04 14:44:19] Failed to send message to client ID: 6
+[2024-01-04 14:44:19] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc#1000,testacc2"
+} To: 6
+[2024-01-04 14:44:19] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc#1000,testacc2"
+} To: 7
+[2024-01-04 14:44:19] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 6
+[2024-01-04 14:47:26] Failed to send message to client ID: 7
+[2024-01-04 14:47:26] Failed to send message to client ID: 6
+[2024-01-04 14:47:26] Processed chat message packet from user ID: 7
+[2024-01-04 14:47:26] Lost connection to client ID: 7
+[2024-01-04 14:47:26] Delete its game room: 
+[2024-01-04 14:47:26] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 6
+[2024-01-04 14:47:26] Failed to send message to client ID: 7
+[2024-01-04 14:47:26] Failed to send message to client ID: 6
+[2024-01-04 14:47:27] Failed to send message to client ID: 6
+[2024-01-04 14:47:27] Processed chat message packet from user ID: 6
+[2024-01-04 14:47:27] Lost connection to client ID: 6
+[2024-01-04 14:47:52] Client Connected! ID:0
+[2024-01-04 14:47:52] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 0
+[2024-01-04 14:47:55] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 0
+[2024-01-04 14:47:55] Failed to send message to client ID: 0
+[2024-01-04 14:48:06] Client Connected! ID:1
+[2024-01-04 14:48:06] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1600"
+} To: 1
+[2024-01-04 14:48:08] got Join room request from ID: 0
+[2024-01-04 14:48:08] Failed to send message to client ID: 1
+[2024-01-04 14:48:08] Failed to send message to client ID: 0
+[2024-01-04 14:48:08] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc2"
+} To: 0
+[2024-01-04 14:48:08] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc2"
+} To: 1
+[2024-01-04 14:48:08] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 0
+[2024-01-04 14:56:30] Failed to bind the address to our listening socket. 1111
+Error code: 48
+[2024-01-04 14:56:51] Failed to bind the address to our listening socket. 1111
+Error code: 48
+[2024-01-04 14:56:55] Failed to bind the address to our listening socket. 1111
+Error code: 48
+[2024-01-04 14:57:02] Failed to bind the address to our listening socket. 1111
+Error code: 48
+[2024-01-04 14:57:49] Client Connected! ID:0
+[2024-01-04 14:57:49] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 0
+[2024-01-04 14:57:51] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 0
+[2024-01-04 14:57:51] Failed to send message to client ID: 0
+[2024-01-04 14:58:08] Client Connected! ID:1
+[2024-01-04 14:58:08] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1600"
+} To: 1
+[2024-01-04 14:58:10] got Join room request from ID: 0
+[2024-01-04 14:58:10] Failed to send message to client ID: 1
+[2024-01-04 14:58:10] Failed to send message to client ID: 0
+[2024-01-04 14:58:10] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc2#1600"
+} To: 0
+[2024-01-04 14:58:10] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc#1000"
+} To: 1
+[2024-01-04 14:58:10] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 0
+[2024-01-04 14:59:24] Failed to send message to client ID: 1
+[2024-01-04 14:59:24] Failed to send message to client ID: 0
+[2024-01-04 14:59:24] Processed chat message packet from user ID: 1
+[2024-01-04 14:59:24] Lost connection to client ID: 1
+[2024-01-04 14:59:24] Delete its game room: 
+[2024-01-04 14:59:24] send:{
+	"Type":	"System",
+	"System_Info":	"LostConnection"
+} To: 0
+[2024-01-04 14:59:24] Failed to send message to client ID: 1
+[2024-01-04 14:59:24] Failed to send message to client ID: 0
+[2024-01-04 14:59:25] Failed to send message to client ID: 0
+[2024-01-04 14:59:25] Processed chat message packet from user ID: 0
+[2024-01-04 14:59:25] Lost connection to client ID: 0
+[2024-01-04 15:07:37] Client Connected! ID:2
+[2024-01-04 15:07:37] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1000"
+} To: 2
+[2024-01-04 15:07:40] send:{
+	"Type":	"System",
+	"System_Info":	"WaitingForSomeoneJoining"
+} To: 2
+[2024-01-04 15:07:40] Failed to send message to client ID: 2
+[2024-01-04 15:07:55] Client Connected! ID:3
+[2024-01-04 15:07:55] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"1600"
+} To: 3
+[2024-01-04 15:08:10] got Join room request from ID: 1
+[2024-01-04 15:08:10] Failed to send message to client ID: 3
+[2024-01-04 15:08:10] Failed to send message to client ID: 2
+[2024-01-04 15:08:10] send:{
+	"Type":	"System",
+	"System_Info":	"HostStartPlaying",
+	"Name_Info":	"testacc2#1600"
+} To: 2
+[2024-01-04 15:08:10] send:{
+	"Type":	"System",
+	"System_Info":	"JoinRoom",
+	"Name_Info":	"testacc#1000"
+} To: 3
+[2024-01-04 15:08:10] send:{
+	"Type":	"System",
+	"System_Info":	"SomeoneJoin_Successfully"
+} To: 2
+[2024-01-04 15:10:14] send:{
+	"Type":	"System",
+	"System_Info":	"ReturnTolobby"
+} To: 3
+[2024-01-04 15:10:14] Failed to send message to client ID: 3
+[2024-01-04 15:10:14] Failed to send message to client ID: 2
+[2024-01-04 15:16:08] Lost connection to client ID: 2
+[2024-01-04 15:16:15] Lost connection to client ID: 3

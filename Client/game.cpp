@@ -733,6 +733,13 @@ void game::playOffline()
     check->setPlainText("CHECK!");
     check->setVisible(false);
 
+    // Name label
+    QLabel *hostLabel = new QLabel(hostName);
+    QFont titleFont("arial" , 15);
+    hostLabel->setFont(titleFont);
+    QLabel *guestLabel = new QLabel(guestName);
+    guestLabel->setFont(titleFont);
+
     // history:
     QListView* lListView = new QListView();
     QListView* rListView = new QListView();
@@ -740,18 +747,37 @@ void game::playOffline()
     rHis = new QStandardItemModel();
     lListView->setModel(lHis);
     rListView->setModel(rHis);
+
+    QVBoxLayout *layout1 = new QVBoxLayout;
+    QVBoxLayout *layout2 = new QVBoxLayout;
+    layout1->addWidget(lListView);
+    layout2->addWidget(rListView);
+
+    QWidget *widget1 = new QWidget;
+    widget1->setLayout(layout1);
+
+    QWidget *widget2 = new QWidget;
+    widget2->setLayout(layout2);
+
     QGraphicsProxyWidget* proxyWidget1 = new QGraphicsProxyWidget();
-    proxyWidget1->setWidget(lListView);
+    proxyWidget1->setWidget(widget1);
     QGraphicsProxyWidget* proxyWidget2 = new QGraphicsProxyWidget();
-    proxyWidget2->setWidget(rListView);
+    proxyWidget2->setWidget(widget2);
+
+
+
     // Set the position and size of the proxy widget
     if(playerside) {
         proxyWidget1->setPos(width()-250, 70);
         proxyWidget2->setPos(width()-250, 600);
+        layout1->addWidget(guestLabel);
+        layout2->insertWidget(0, hostLabel);
     }
     else {
         proxyWidget1->setPos(width()-250, 600);
         proxyWidget2->setPos(width()-250, 70);
+        layout2->addWidget(guestLabel);
+        layout1->insertWidget(0, hostLabel);
     }
     proxyWidget1->resize(200, 250);
     proxyWidget2->resize(200, 250);
@@ -951,7 +977,41 @@ void game::closeEvent(QCloseEvent *event)
         Lobby->close();
 }
 
-void game::palyAsWhiteOnline()
+void game::playAsWhiteOnline(QString player1, QString player2)
+{
+    delete Siri;
+    Siri =NULL;
+    AIsSide = -1;
+    playerside = 0;
+    onlineGame = true;
+    gameScene->clear();
+    hostName = player1;
+    guestName = player2;
+    playOffline();
+    addToScene(turnDisplay);
+    addToScene(check);
+    placeTheBoard();
+    placePieces();
+}
+
+void game::playAsBlackOnline(QString player1, QString player2)
+{
+    delete Siri;
+    Siri =NULL;
+    AIsSide = -1;
+    playerside = 1;
+    onlineGame = true;
+    gameScene->clear();
+    hostName = player2;
+    guestName = player1;
+    playOffline();
+    addToScene(turnDisplay);
+    addToScene(check);
+    placeTheBoard();
+    placePieces();
+}
+
+void game::playAsWhiteOnline()
 {
     delete Siri;
     Siri =NULL;
@@ -966,7 +1026,7 @@ void game::palyAsWhiteOnline()
     placePieces();
 }
 
-void game::palyAsBlackOnline()
+void game::playAsBlackOnline()
 {
     delete Siri;
     Siri =NULL;
@@ -980,5 +1040,4 @@ void game::palyAsBlackOnline()
     placeTheBoard();
     placePieces();
 }
-
 

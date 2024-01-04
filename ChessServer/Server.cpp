@@ -255,20 +255,20 @@ bool Server::Processinfo(int ID) {
             user_PW_Json = cJSON_GetObjectItem(json, "PW");
             QString user_ID = user_ID_Json->valuestring;
             QString user_PW = user_PW_Json->valuestring;
-            bool flag = false, isLogin = false;
+            int flag = -1, isLogin = false;
             for (int i = 0; i < accList.size(); i++) {
                 if (accList[i].ID == user_ID && accList[i].PassW == user_PW) {
                     if (accList[i].login) {
                         isLogin = true;
                         break;
                     }
-                    flag = true;
+                    flag = i;
                     accList[i].login = true;
                     break;
                 }
             }
-            if (flag) {
-                sendSystemInfo(ID, "LogIn_SUCCESS");
+            if (flag>-1) {
+                sendSystemInfo(ID, "LogIn_SUCCESS","elo",std::to_string(accList[flag].elo));
                 string MOTD = "MOTD: Welcome! This is the message of the day!.";
                 SendString(ID, MOTD);
                 sendGameList(ID);
@@ -353,9 +353,11 @@ bool Server::Processinfo(int ID) {
                 PlayerList[ID]->JoininGame(gameID, GameList[gameID]);
                 sendGameList(-1);
                 int hostID = GameList[gameID]->hostsID();
-                sendSystemInfo(hostID, "HostStartPlaying");
-                if (sendSystemInfo(ID, "JoinRoom"))
+                sendSystemInfo(hostID, "HostStartPlaying","Name_Info" , GameList[gameID]->p2Name );
+                if (sendSystemInfo(ID, "JoinRoom", "Name_Info", GameList[gameID]->hostName)){
                     sendSystemInfo(hostID, "SomeoneJoin_Successfully");
+
+                }
             }
         } else if (type == "BackToLobby") {
             if (PlayerList[ID]->AreYouInGame() >= 0) {
@@ -410,7 +412,6 @@ bool Server::Processinfo(int ID) {
             QSqlQuery query = connector.executeQuery("SELECT * FROM accounts ORDER BY elo DESC LIMIT 50;");
             while (query.next()) {
                 QString user_id = query.value(0).toString();
-                QString password = query.value(1).toString();
                 int elo = query.value(2).toInt();
 
                 qDebug() << "USER ID: " << user_id;
@@ -488,10 +489,15 @@ bool Server::CreateGameList(string &_string) {
     ;
 }
 
-bool Server::sendSystemInfo(int ID, string InfoType) {
+bool Server::sendSystemInfo(int ID, string InfoType, string addKey, string addValue) {
     cJSON *json = cJSON_CreateObject();
     cJSON_AddStringToObject(json, "Type", "System");
     cJSON_AddStringToObject(json, "System_Info", InfoType.c_str());
+
+    if(addKey!=""){
+        cJSON_AddStringToObject(json,addKey.c_str(),addValue.c_str());
+    }
+
     char *JsonToSend = cJSON_Print(json);
     cJSON_Delete(json);
     cout << "send:" << endl

@@ -73,11 +73,12 @@ public:
 		else
 			std::cout << "player2_play_again is FALSE" << std::endl;
 	}
+    std::string hostName;
+    std::string p2Name;
 private:
 	int id;
 	int host_id;
-	std::string hostName;
-	std::string p2Name;
+
 	int guest_id = -1;
 	int isplay = 0;
 	bool host_play_again = false;

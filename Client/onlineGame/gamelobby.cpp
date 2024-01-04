@@ -37,8 +37,10 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     connect(this, SIGNAL(Full()), this, SLOT(This_Game_isFull()));
     connect(this, SIGNAL(someoneLeave()), this, SLOT(Leave()));
     connect(this, SIGNAL(ShowGame()), Game, SLOT(SHOW()));
-    connect(this, SIGNAL(PlayBlack()), Game, SLOT(palyAsBlackOnline()));
-    connect(this, SIGNAL(PlayWhite()), Game, SLOT(palyAsWhiteOnline()));
+    connect(this, SIGNAL(PlayBlack(QString, QString)), Game, SLOT(playAsBlackOnline(QString, QString)));
+    connect(this, SIGNAL(PlayWhite(QString, QString)), Game, SLOT(playAsWhiteOnline(QString, QString)));
+    connect(this, SIGNAL(PlayBlackAgain()), Game, SLOT(playAsBlackOnline()));
+    connect(this, SIGNAL(PlayWhiteAgain()), Game, SLOT(playAsWhiteOnline()));
     connect(this, SIGNAL(moveTo(onlineMove*)), Game, SLOT(receiveMove(onlineMove*)));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -94,6 +96,14 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     titleText->setPos(xPos,yPos);
     //show!
     OnlineScene->addItem(titleText);
+
+    // info title
+    QGraphicsTextItem *infoTitle = new QGraphicsTextItem("Logged in as: " + id_id + "\nElo: " + QString::number(id_elo));
+    QFont infoFont("arial",20);
+    infoTitle->setFont(infoFont);
+    infoTitle->setPos(50, 100);
+    OnlineScene->addItem(infoTitle);
+
     playButton = new button("Return to Menu");
     int pxPos = 150;
     int pyPos = 750;
@@ -227,19 +237,26 @@ bool gameLobby::requestLogIn(QString id, QString pw) {
     for(int i = 0; i < 50; i++) {
         if (recv(Connection, buffer, sizeof(buffer), MSG_DONTWAIT) > 0) {
             qDebug() << buffer;
-            cJSON *json, *json_type, *json_System_Info;
+            cJSON *json, *json_type, *json_System_Info, *json_elo;
             json = cJSON_Parse(buffer);
             json_type = cJSON_GetObjectItem(json , "Type");
             json_System_Info = cJSON_GetObjectItem(json, "System_Info");
+
             std::string type = "";
             std::string systemInfo;
             if (json_type != NULL && json_System_Info != NULL) {
                 type = json_type->valuestring;
                 systemInfo = json_System_Info->valuestring;
             }
-            cJSON_Delete(json);
-            if (type == "System" && systemInfo == "LogIn_SUCCESS")
+
+            if (type == "System" && systemInfo == "LogIn_SUCCESS"){
+                json_elo = cJSON_GetObjectItem(json,"elo");
+                std::string tmp = json_elo->valuestring;
+                id_elo = std::stoi(tmp);
+                cJSON_Delete(json);
                 return true;
+            }
+            cJSON_Delete(json);
             if(systemInfo == "LogIn_FAILED_ID_PW") QMessageBox::critical(NULL, "Error", "Failed to Log In!\nIncorrect ID or password");
             else QMessageBox::critical(NULL, "Error", "Failed to Log In!\nAccount currently in use!");
             return false;
@@ -388,7 +405,7 @@ void gameLobby::CreateAGameRoom()
 {
     if (!host && !waiting && !inRooms)
     {
-        std::string user = id_id.toStdString();
+        std::string user = id_id.toStdString() + "#" + std::to_string(id_elo);
         if(user.length() > 16)
             user = user.substr(0, 16);
         if (!CreateRoom(user))
@@ -540,6 +557,7 @@ bool gameLobby::GetString()
         cJSON *System_Info;
         System_Info = cJSON_GetObjectItem(json, "System_Info");
         std::string systemInfo =System_Info->valuestring;
+        qDebug() << buffer;
         if (systemInfo == "SomeoneJoin_Successfully")
         {
             //signal
@@ -551,7 +569,10 @@ bool gameLobby::GetString()
             inRooms = true;
             clientptr->waiting = false;
             //signal
-            emit PlayWhite();
+            cJSON *Name_Info;
+            Name_Info = cJSON_GetObjectItem(json, "Name_Info");
+            QString nameInfo = Name_Info->valuestring;
+            emit PlayWhite(id_id + "#" + QString::number(id_elo), nameInfo);
         }
         // server should send JoinRoom first then send SomeoneJoining
         else if (systemInfo == "JoinRoom")
@@ -561,15 +582,19 @@ bool gameLobby::GetString()
             inRooms = true;
             clientptr->waiting = false;
             //signal
-            emit PlayBlack();
+            cJSON *Name_Info;
+            Name_Info = cJSON_GetObjectItem(json, "Name_Info");
+            QString nameInfo = Name_Info->valuestring;
+            qDebug() << nameInfo;
+            emit PlayBlack(nameInfo,id_id + "#" + QString::number(id_elo));
             emit ShowGame();
         }
         else if (systemInfo == "PlayAgain")
         {
             if (yourSide == 1) // you are playing black
-                emit PlayBlack();
+                emit PlayBlackAgain();
             else
-                emit PlayWhite();
+                emit PlayWhiteAgain();
         }
         else if (systemInfo == "RoomClose")
         {
@@ -757,7 +782,7 @@ void gameLobby::SendRequestForJoining(int ID)
     //if !Request
     Request=cJSON_CreateObject();
     cJSON_AddStringToObject(Request,"Type","JoinRoomRequest");
-    cJSON_AddStringToObject(Request,"User", chRoom->userNameLineEdit->text().toStdString().c_str());
+    cJSON_AddStringToObject(Request,"User", (id_id + "#" + QString::number(id_elo)).toStdString().c_str());
     cJSON_AddNumberToObject(Request,"ID",ID);
 
     char *JsonToSend = cJSON_Print(Request);   //make the json as char*

@@ -43,6 +43,8 @@ public:
     bool CanYouMove(int yourturn);
     bool onlineGame = false;
     friend class Piece;
+    QString hostName;
+    QString guestName;
 
 public slots:
     void startVSblackAI();
@@ -53,8 +55,10 @@ public slots:
     void openGameLobby();
     void backToLobby();
     void SHOW();
-    void palyAsWhiteOnline();
-    void palyAsBlackOnline();
+    void playAsWhiteOnline(QString, QString);
+    void playAsBlackOnline(QString, QString);
+    void playAsWhiteOnline();
+    void playAsBlackOnline();
     void receiveMove(onlineMove*);
 
 protected:
@@ -74,6 +78,7 @@ private:
     void AIsMove();
     QStandardItemModel* lHis = NULL;
     QStandardItemModel* rHis = NULL;
+
 };
 
 #endif // GAME_H

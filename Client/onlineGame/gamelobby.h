@@ -47,6 +47,7 @@ public:
     void Signal_TimeoutJoin();
     bool backToLobby();
     QString id_id;
+    int id_elo;
 
 signals:
     void updateRooms(cJSON *Lists);
@@ -55,8 +56,10 @@ signals:
     void TimeoutJoin();
     void someoneLeave();
     void ShowGame();
-    void PlayWhite();
-    void PlayBlack();
+    void PlayWhite(QString, QString);
+    void PlayBlack(QString, QString);
+    void PlayWhiteAgain();
+    void PlayBlackAgain();
     void moveTo(onlineMove*); // need to be done
     void Full();
     void RoomClose(); // need to be done;
