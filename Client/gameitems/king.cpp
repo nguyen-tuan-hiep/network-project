@@ -38,7 +38,7 @@ bool king::canmove(int x, int y)
                 return false;
         }
         isrook -> moveTo(x-pace, y, false);
-        return true; // uhhhhh, forget to make this outside, fuck.
+        return true;
     }
     else
         return false;

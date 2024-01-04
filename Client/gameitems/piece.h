@@ -43,7 +43,7 @@ protected:
     boardbox *CurrentBox;
 
 private:
-    QString pieName[6] = {"Pawn", "Bishop", "Knight", "Rook", "Queen", "King"};
+    QString pieName[6] = {"", "B", "N", "R", "Q", "K"};
     bool isdead = false;
     int weight;
     bool ismoved = false;

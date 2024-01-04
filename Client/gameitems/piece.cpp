@@ -124,10 +124,10 @@ bool Piece::pawnAttack(int x, int y)
 
 QString Piece::moveTo(int x, int y, bool diePrefix)
 {
-    QString prefix = " -> ";
+    QString prefix = "";
     if(diePrefix)
-        prefix = " x ";
-    QString res = pieName[getType()-4]+": "+QChar('A'+location[0])+QString::number(8 - location[1])+prefix;
+        prefix = "x";
+    QString res = pieName[getType()-4]+QChar('a'+location[0])+QString::number(8 - location[1])+prefix;
     int xPos, yPos;
     if(this->getCurrentBox()->getboard()->playerSside())
     {
@@ -142,11 +142,13 @@ QString Piece::moveTo(int x, int y, bool diePrefix)
     boardbox *targetBox = this->getCurrentBox()->getboard()->getbox(x,y);
     this->setPos(xPos,yPos);
     this->setlocation(x,y);
-    res += (QChar('A'+x)+QString::number(8-y));
+    res += (QChar('a'+x)+QString::number(8-y));
     this->moved();
     this->getCurrentBox()->removepiece();
     this->setCurrentBox(targetBox);
     this->getCurrentBox()->placepiece(this);
+    if(res == "Ke1g1" || res == "Ke8g8") res = "0-0";
+    else if(res == "Ke1c1" || res == "Ke8c8") res = "0-0-0";
     return res;
 }
 

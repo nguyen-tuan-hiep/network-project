@@ -398,7 +398,7 @@ bool Server::Processinfo(int ID) {
                 if (anotherPlayer >= 0) {
                     float res;
                     std::string name;
-                    if(result == 2) res = 0.5;
+
                     if(PlayerList[ID]->ishost){
                         name = GameList[HID]->hostName;
                         eloA = NameToElo(name);
@@ -412,6 +412,7 @@ bool Server::Processinfo(int ID) {
                         if(result == 0) res = 1;
                         else if (result == 1) res = 0;
                     }
+                    if(result == 2) res = 0.5;
                     int gain = CalculateElo(eloA, eloB, res);
                     cJSON *json = cJSON_CreateObject();
                     cJSON_AddStringToObject(json, "Type", "Result");
@@ -426,7 +427,16 @@ bool Server::Processinfo(int ID) {
                 }
 
             }
+        } else if (type == "AskDraw" || type == "Draw"){
+            if (PlayerList[ID]->AreYouInGame() >= 0) {
+                int HID = PlayerList[ID]->AreYouInGame();
+                int anotherPlayer = GameList[HID]->anotherPlayerID(ID);
+                if (anotherPlayer >= 0) {
+                    SendString(anotherPlayer, Message);
+                }
+            }
         }
+
     }
     cout << "Processed chat message packet from user ID: " << ID << endl;
     cJSON_Delete(json);
@@ -587,8 +597,10 @@ int Server::CalculateElo(int playerA,int playerB, float result){
     else if(playerA < 2400) K = 24;
     else K = 16;
 
+    float expectedA =(1+std::pow(10, (playerB - playerA) / 400));
+    expectedA = 1 / expectedA;
 
-    return round( K * (result - 1 / (1+std::pow(10, (playerB - playerA) / 400))));
+    return round( K * (result - expectedA));
 }
 
 void Server::UpdateElo(std::string nameElo, int gain){

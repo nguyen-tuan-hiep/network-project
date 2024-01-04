@@ -43,8 +43,9 @@ public:
     bool CanYouMove(int yourturn);
     bool onlineGame = false;
     friend class Piece;
-    QString hostName;
-    QString guestName;
+    QString hostName = "You";
+    QString guestName = "Computer";
+    void addMove(QString);
 
 public slots:
     void startVSblackAI();
@@ -60,6 +61,8 @@ public slots:
     void playAsWhiteOnline();
     void playAsBlackOnline();
     void receiveMove(onlineMove*);
+    void Draw();
+    void askDraw();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -78,9 +81,9 @@ private:
     QGraphicsTextItem * turnDisplay;
     int playerside = 0;
     void AIsMove();
-    QStandardItemModel* lHis = NULL;
-    QStandardItemModel* rHis = NULL;
-
+    QListWidget *historyWidget = NULL;
+    int currentMoveIndex = 1;
+    QStringList currentMovePair;
 };
 
 #endif // GAME_H

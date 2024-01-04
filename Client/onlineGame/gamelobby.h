@@ -49,6 +49,7 @@ public:
     QString id_id;
     int id_elo;
     int recent_elo = 0;
+    void sendDraw(int);
 signals:
     void updateRooms(cJSON *Lists);
     void socketClosed();
@@ -64,6 +65,10 @@ signals:
     void Full();
     void RoomClose(); // need to be done;
     void ListFull();
+    void Draw();
+    void askDraw();
+
+
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -125,6 +130,8 @@ public slots:
     QStringList getTopRanking();
     QGraphicsProxyWidget *createRankingWidget();
     void EndGame(int);
+    void I_wannaDraw();
+
 };
 
 

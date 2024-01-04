@@ -42,6 +42,8 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     connect(this, SIGNAL(PlayBlackAgain()), Game, SLOT(playAsBlackOnline()));
     connect(this, SIGNAL(PlayWhiteAgain()), Game, SLOT(playAsWhiteOnline()));
     connect(this, SIGNAL(moveTo(onlineMove*)), Game, SLOT(receiveMove(onlineMove*)));
+    connect(this, SIGNAL(askDraw()), Game, SLOT(askDraw()));
+    connect(this, SIGNAL(Draw()), Game, SLOT(Draw()));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //--------------------------------------------------------
@@ -645,6 +647,16 @@ bool gameLobby::GetString()
 
         //when leave room, you need to reset yourSide = -1, inRooms = false, and hide game again.
         // and clientptr->host = false;!!!
+    }else if (type == "AskDraw"){
+        emit askDraw();
+
+    }else if (type == "Draw"){
+        cJSON *json_result;
+        json_result = cJSON_GetObjectItem(json, "Confirm");
+        int result = json_result->valueint;
+        if(result)
+            emit Draw();
+        cJSON_Delete(json);
     }
     return true;
 }
@@ -908,4 +920,30 @@ void gameLobby::EndGame(int color){
     {
 
     }
+}
+
+void gameLobby::I_wannaDraw(){
+    cJSON * Mesg;
+    Mesg=cJSON_CreateObject();
+    cJSON_AddStringToObject(Mesg,"Type","AskDraw");
+    char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
+    cJSON_Delete(Mesg);
+    qDebug() << JsonToSend;
+    if (send(Connection, JsonToSend, MAXSIZE, NULL))
+    {
+    }
+}
+
+void gameLobby::sendDraw(int reply){
+    cJSON * Mesg;
+    Mesg=cJSON_CreateObject();
+    cJSON_AddStringToObject(Mesg,"Type","Draw");
+
+    cJSON_AddNumberToObject(Mesg,"Confirm",reply);
+
+    char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
+    cJSON_Delete(Mesg);
+    qDebug() << JsonToSend;
+    if(send(Connection, JsonToSend, MAXSIZE, NULL))
+        emit Draw();
 }

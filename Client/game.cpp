@@ -415,10 +415,7 @@ void game::mouseReleaseEvent(QMouseEvent *event)
 
                 }
                 hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
-                if(piece_to_placed->getside())
-                    rHis->appendRow(new QStandardItem(hisTxt));
-                else
-                    lHis->appendRow(new QStandardItem(hisTxt));
+                addMove(hisTxt);
                 piece_to_placed->setZValue(piece_to_placed->origin_zValue);
                 piece_to_placed = NULL;
                 return;
@@ -435,10 +432,7 @@ void game::mouseReleaseEvent(QMouseEvent *event)
 
             }
             hisTxt = piece_to_placed->moveTo(x,y, dieLogHis);
-            if(piece_to_placed->getside())
-                rHis->appendRow(new QStandardItem(hisTxt));
-            else
-                lHis->appendRow(new QStandardItem(hisTxt));
+            addMove(hisTxt);
             if (y == 0+Pieceside*7)
             {
                 Piece *newPiece = new queen(Pieceside,x,y);
@@ -529,10 +523,7 @@ void game::mouseReleaseEvent(QMouseEvent *event)
 
                         }
                         hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
-                        if(piece_to_placed->getside())
-                            rHis->appendRow(new QStandardItem(hisTxt));
-                        else
-                            lHis->appendRow(new QStandardItem(hisTxt));
+                        addMove(hisTxt);
                         piece_to_placed->setZValue(piece_to_placed->origin_zValue);
                         piece_to_placed = NULL;
                         return;
@@ -568,10 +559,7 @@ void game::mouseReleaseEvent(QMouseEvent *event)
                 }
             }
             hisTxt = piece_to_placed->moveTo(x,y,dieLogHis);
-            if(piece_to_placed->getside())
-                rHis->appendRow(new QStandardItem(hisTxt));
-            else
-                lHis->appendRow(new QStandardItem(hisTxt));
+            addMove(hisTxt);
             if (y == 0+Pieceside*7 && piece_to_placed->getType()==4)
             {
                 Piece *newPiece = new queen(Pieceside,x,y);
@@ -668,19 +656,13 @@ void game::AIsMove()
             qDebug() << "Game over!";
             gameOver(diediediedie);
             QString hisTxt = lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow,dieLogHis);
-            if(lol->targetPiece->getside())
-                rHis->appendRow(new QStandardItem(hisTxt));
-            else
-                lHis->appendRow(new QStandardItem(hisTxt));
+            addMove(hisTxt);
             lol = NULL;
             return;
         }
     }
     QString hisTxt = lol->targetPiece->moveTo(lol->BoxCol,lol->BoxRow,dieLogHis);
-    if(lol->targetPiece->getside())
-        rHis->appendRow(new QStandardItem(hisTxt));
-    else
-        lHis->appendRow(new QStandardItem(hisTxt));
+    addMove(hisTxt);
 
     if (board->checkCanCheck() == (!AIsSide))
         checking = true;
@@ -720,6 +702,24 @@ void game::changeTurn()
     }
 }
 
+void game::addMove(QString move) {
+    currentMovePair.append(move);
+
+    // Check if it's the first or second move in a pair
+    if (currentMovePair.size() == 1) {
+        QString moveText = QString::number(currentMoveIndex) + ". " + currentMovePair[0];
+        historyWidget->addItem(moveText);
+    } else if (currentMovePair.size() == 2) {
+        // Update the last item with the second move
+        QString moveText = QString::number(currentMoveIndex) + ". " + currentMovePair.join(" ");
+        QListWidgetItem *lastItem = historyWidget->item(historyWidget->count() - 1);
+        lastItem->setText(moveText);
+
+        currentMoveIndex++;
+        currentMovePair.clear();
+    }
+}
+
 void game::playOffline()
 {
     piece_to_placed = NULL; // always initiate and delete it first.
@@ -741,56 +741,41 @@ void game::playOffline()
     check->setVisible(false);
 
     // Name label
-    QLabel *hostLabel = new QLabel(hostName);
-    QFont titleFont("arial" , 15);
-    hostLabel->setFont(titleFont);
-    QLabel *guestLabel = new QLabel(guestName);
+    QFont titleFont("arial", 15);
+    QLabel *guestLabel = new QLabel("You're playing against: \n" + guestName);
     guestLabel->setFont(titleFont);
 
     // history:
-    QListView* lListView = new QListView();
-    QListView* rListView = new QListView();
-    lHis = new QStandardItemModel();
-    rHis = new QStandardItemModel();
-    lListView->setModel(lHis);
-    rListView->setModel(rHis);
+    historyWidget = new QListWidget();
 
     QVBoxLayout *layout1 = new QVBoxLayout;
-    QVBoxLayout *layout2 = new QVBoxLayout;
-    layout1->addWidget(lListView);
-    layout2->addWidget(rListView);
+    layout1->addWidget(historyWidget);
+
 
     QWidget *widget1 = new QWidget;
     widget1->setLayout(layout1);
 
-    QWidget *widget2 = new QWidget;
-    widget2->setLayout(layout2);
 
     QGraphicsProxyWidget* proxyWidget1 = new QGraphicsProxyWidget();
     proxyWidget1->setWidget(widget1);
-    QGraphicsProxyWidget* proxyWidget2 = new QGraphicsProxyWidget();
-    proxyWidget2->setWidget(widget2);
 
 
 
-    // Set the position and size of the proxy widget
-    if(playerside) {
-        proxyWidget1->setPos(width()-250, 70);
-        proxyWidget2->setPos(width()-250, 600);
-        layout1->addWidget(guestLabel);
-        layout2->insertWidget(0, hostLabel);
+
+    proxyWidget1->setPos(width()-250, 70);
+    layout1->addWidget(guestLabel);
+
+    proxyWidget1->resize(200, 350);
+
+    if(onlineGame){
+        button * drawButton = new button("Draw");
+        connect(drawButton,SIGNAL(clicked()) , Lobby , SLOT(I_wannaDraw()));
+        // Add the proxy widget to the scene
+        drawButton->setZValue(5);
+        drawButton->setPos(width()-250, 450);
+        addToScene(drawButton);
     }
-    else {
-        proxyWidget1->setPos(width()-250, 600);
-        proxyWidget2->setPos(width()-250, 70);
-        layout2->addWidget(guestLabel);
-        layout1->insertWidget(0, hostLabel);
-    }
-    proxyWidget1->resize(200, 250);
-    proxyWidget2->resize(200, 250);
-    // Add the proxy widget to the scene
     gameScene->addItem(proxyWidget1);
-    gameScene->addItem(proxyWidget2);
 }
 
 void game::SetGamecolor()
@@ -937,11 +922,7 @@ void game::receiveMove(onlineMove* move)
             qDebug() << "Game over!";
             gameOver(diediediedie);
             QString hisTxt = targetPiece->moveTo(x,y,dieLogHis);
-            if(targetPiece->getside())
-                rHis->appendRow(new QStandardItem(hisTxt));
-            else
-                lHis->appendRow(new QStandardItem(hisTxt));
-            return;
+            addMove(hisTxt);
         }
     }
 
@@ -954,16 +935,12 @@ void game::receiveMove(onlineMove* move)
         else
             rookX = 5;
         QString hisTxt = rook->moveTo(rookX, fromY,dieLogHis);
-        if(rook->getside())
-            rHis->appendRow(new QStandardItem(hisTxt));
-        else
-            lHis->appendRow(new QStandardItem(hisTxt));
+        if (rookX = 3) hisTxt = "0-0";
+        else hisTxt = "0-0-0";
+        addMove(hisTxt);
     }
     QString hisTxt = targetPiece->moveTo(x,y,dieLogHis);
-    if(targetPiece->getside())
-        rHis->appendRow(new QStandardItem(hisTxt));
-    else
-        lHis->appendRow(new QStandardItem(hisTxt));
+    if(Cast<0) addMove(hisTxt);
 
     if (board->checkCanCheck() == (!turn))
         checking = true;
@@ -1067,4 +1044,15 @@ void game::playAsBlackOnline()
     addToScene(check);
     placeTheBoard();
     placePieces();
+}
+
+void game::Draw(){
+    gameOver(2);
+}
+
+void game::askDraw(){
+    int reply = QMessageBox::question(NULL, "Draw", "Your opponent request for a Draw\nAccepted?",
+                                      QMessageBox::Yes|QMessageBox::No);
+    Lobby->sendDraw(reply == QMessageBox::Yes);
+
 }
