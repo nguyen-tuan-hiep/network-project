@@ -107,68 +107,30 @@ Server::Server(int PORT, bool BroadcastPublically)  // Port = port to broadcast 
     // file.close();
 }
 
-// bool Server::Signup(QString username, QString password, int elo){
-//     std::lock_guard<std::mutex> guard(mutexLock);
-//     SqlConnector connector;
-//     if (connector.openConnection()) {
-//         qDebug() << "Connected to the database!";
-//     } else {
-//         qDebug() << "Cannot connect to the database!";
-//         exit(66);
-//     }
-//     QSqlQuery query;
-//     QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
-//     query.prepare(sQuery);
-//     query.bindValue(":username", username);
-//     query.bindValue(":password", password);
-//     query.bindValue(":elo", elo);
-//     if (query.exec()) {
-//         qDebug() << "Data inserted successfully.";
-//         return true;
-//     } else {
-//         qDebug() << "Error executing query:";
-//         qDebug() << query.lastError().text();
-//         return false;
-//     }
-//     connector.closeConnection();
-// }
-
-bool Server::Signup(QString username, QString password, int elo) {
+bool Server::Signup(QString username, QString password, int elo){
+    std::lock_guard<std::mutex> guard(mutexLock);
     SqlConnector connector;
-    if(connector.openConnection()) {
+    if (connector.openConnection()) {
         qDebug() << "Connected to the database!";
-
-        // Check if the username already exists
-        QSqlQuery checkQuery;
-        checkQuery.prepare("SELECT user_id FROM accounts WHERE user_id = :username");
-        checkQuery.bindValue(":username", username);
-        if (checkQuery.exec() && checkQuery.next()) {
-            qDebug() << "Username already exists!";
-            return false; // Username already exists, return false
-        }
-
-        // Username doesn't exist, proceed to insert
-        QSqlQuery insertQuery;
-        QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password, :elo)";
-        insertQuery.prepare(sQuery);
-        insertQuery.bindValue(":username", username);
-        insertQuery.bindValue(":password", password);
-        insertQuery.bindValue(":elo", elo);
-
-        if (insertQuery.exec()) {
-            qDebug() << "Data inserted successfully.";
-            connector.closeConnection();
-            return true; // Successfully inserted
-        } else {
-            qDebug() << "Error executing query:";
-            qDebug() << insertQuery.lastError().text();
-            connector.closeConnection();
-            return false; // Error in query execution
-        }
     } else {
         qDebug() << "Cannot connect to the database!";
         exit(66);
     }
+    QSqlQuery query;
+    QString sQuery = "INSERT INTO accounts (user_id, password, elo) VALUES (:username, :password,:elo)";
+    query.prepare(sQuery);
+    query.bindValue(":username", username);
+    query.bindValue(":password", password);
+    query.bindValue(":elo", elo);
+    if (query.exec()) {
+        qDebug() << "Data inserted successfully.";
+        return true;
+    } else {
+        qDebug() << "Error executing query:";
+        qDebug() << query.lastError().text();
+        return false;
+    }
+    connector.closeConnection();
 }
 
 
