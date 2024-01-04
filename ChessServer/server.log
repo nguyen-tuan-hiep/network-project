@@ -948,3 +948,46 @@ Error code: 48
 [2024-01-04 15:10:14] Failed to send message to client ID: 2
 [2024-01-04 15:16:08] Lost connection to client ID: 2
 [2024-01-04 15:16:15] Lost connection to client ID: 3
+[2024-01-04 22:21:07] Client Connected! ID:0
+[2024-01-04 22:21:08] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_SUCCESS"
+} To: 0
+[2024-01-04 22:21:09] Lost connection to client ID: 0
+[2024-01-04 22:22:36] Client Connected! ID:0
+[2024-01-04 22:22:37] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_FAILED"
+} To: 0
+[2024-01-04 22:22:38] Lost connection to client ID: 0
+[2024-01-04 22:23:11] Client Connected! ID:1
+[2024-01-04 22:23:11] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_FAILED"
+} To: 1
+[2024-01-04 22:23:13] Lost connection to client ID: 1
+[2024-01-04 22:30:43] Client Connected! ID:0
+[2024-01-04 22:30:43] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_FAILED_UserExists"
+} To: 0
+[2024-01-04 22:30:44] Lost connection to client ID: 0
+[2024-01-04 22:30:59] Client Connected! ID:1
+[2024-01-04 22:30:59] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_FAILED_UserExists"
+} To: 1
+[2024-01-04 22:31:01] Lost connection to client ID: 1
+[2024-01-04 22:31:16] Client Connected! ID:2
+[2024-01-04 22:31:16] send:{
+	"Type":	"System",
+	"System_Info":	"SignUp_SUCCESS"
+} To: 2
+[2024-01-04 22:31:18] Lost connection to client ID: 2
+[2024-01-04 22:31:41] Client Connected! ID:3
+[2024-01-04 22:31:41] send:{
+	"Type":	"System",
+	"System_Info":	"LogIn_SUCCESS",
+	"elo":	"400"
+} To: 3
+[2024-01-04 22:31:50] Lost connection to client ID: 3

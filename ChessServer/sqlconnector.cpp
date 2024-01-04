@@ -1,4 +1,4 @@
-#include "SqlConnector.h"
+#include "sqlconnector.h"
 
 SqlConnector::SqlConnector() {
     db = QSqlDatabase::addDatabase("QMYSQL");
