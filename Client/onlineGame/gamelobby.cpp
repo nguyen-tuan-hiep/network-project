@@ -58,6 +58,7 @@ gameLobby::gameLobby(QWidget *parent):QGraphicsView(parent)
     QFormLayout layout(&dialog);
     layout.addRow("Server IP address:", &text1LineEdit);
     layout.addRow("ID:", &text2LineEdit);
+    text3LineEdit.setEchoMode(QLineEdit::Password);
     layout.addRow("Password:", &text3LineEdit);
     // Create an OK button
     QPushButton okButton("OK");

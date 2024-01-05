@@ -64,7 +64,6 @@ void game::register_user() {
     QLineEdit text2LineEdit;
     QLineEdit text3LineEdit;
     QLineEdit text4LineEdit;
-    QLineEdit text5LineEdit;
     text1LineEdit.setText("127.0.0.1");
     QComboBox level;
     level.addItem(tr("New to chess"));
@@ -76,10 +75,11 @@ void game::register_user() {
     QFormLayout layout(&dialog);
     layout.addRow("Server IP address:", &text1LineEdit);
     layout.addRow("ID:", &text2LineEdit);
+    text3LineEdit.setEchoMode(QLineEdit::Password);
     layout.addRow("Password:", &text3LineEdit);
+    text4LineEdit.setEchoMode(QLineEdit::Password);
     layout.addRow("Confirm password:", &text4LineEdit);
     layout.addRow("Level", &level);
-    layout.addRow("Verification code:", &text5LineEdit);
     // Create an OK button
     QPushButton okButton("Register");
     layout.addRow(&okButton);
@@ -87,17 +87,13 @@ void game::register_user() {
     QObject::connect(&okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
     // Show the dialog and wait for user input
     if (dialog.exec() == QDialog::Accepted) {
-        QString in_txt[5] = {text1LineEdit.text(), text2LineEdit.text(), text3LineEdit.text(),
-                                    text4LineEdit.text(), text5LineEdit.text()};
-        for(int i = 0; i < 5; i++)
+        QString in_txt[4] = {text1LineEdit.text(), text2LineEdit.text(), text3LineEdit.text(),
+                                    text4LineEdit.text()};
+        for(int i = 0; i < 4; i++)
             if(in_txt[i].isEmpty()) {
                 QMessageBox::critical(NULL, "Error", "Missing Input\nPlease try again!");
                 return;
             }
-        if(in_txt[4] != "123321") {
-            QMessageBox::critical(NULL, "Error", "Wrong verification code to register!");
-            return;
-        }
         if(in_txt[2] != in_txt[3]) {
             QMessageBox::critical(NULL, "Error", "The passwords are different!");
             return;
