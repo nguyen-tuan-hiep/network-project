@@ -164,9 +164,10 @@ QStringList gameLobby::getTopRanking(){
     Mesg = cJSON_CreateObject();
     cJSON_AddStringToObject(Mesg,"Type","GetTopRanking");
     char *JsonToSend = cJSON_Print(Mesg);
+    qDebug() << strlen(JsonToSend) ;
     cJSON_Delete(Mesg);
     QStringList rankingList;
-    if(send(Connection, JsonToSend, MAXSIZE, NULL)<0){
+    if(send(Connection, JsonToSend, strlen(JsonToSend), NULL)<0){
         QMessageBox::critical(NULL,"Error", "Cannot send GetTopRanking message!");
         return rankingList;
     }else{
@@ -238,7 +239,7 @@ bool gameLobby::requestLogIn(QString id, QString pw) {
     cJSON_AddStringToObject(Mesg,"PW", pw.toStdString().c_str());
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    if (send(Connection, JsonToSend, MAXSIZE, NULL) < 0)
+    if (send(Connection, JsonToSend, strlen(JsonToSend), NULL) < 0)
         return false;
     // receive response
     char buffer[MAXSIZE] = {0};
@@ -311,7 +312,7 @@ bool gameLobby::sendMove(int FromX, int FromY, int ToX, int ToY)
     cJSON_AddNumberToObject(Move,"ToY",ToY);
     cJSON_AddNumberToObject(Move,"Castling",-1);
     char *JsonToSend = cJSON_Print(Move);   //make the json as char*
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
         return false;
     return true;
@@ -330,7 +331,7 @@ bool gameLobby::sendMove(int FromX, int FromY, int ToX, int ToY, int castling)
     cJSON_AddNumberToObject(Move,"ToY",ToY);
     cJSON_AddNumberToObject(Move,"Castling",castling);
     char *JsonToSend = cJSON_Print(Move);   //make the json as char*
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
         return false;
     return true;
@@ -359,7 +360,7 @@ void gameLobby::I_wannaPlayAgain()
     cJSON_AddStringToObject(Mesg,"Type","PlayAgain");
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     //if (RetnCheck == SOCKET_ERROR)
         //return false;
     //return true;
@@ -386,7 +387,7 @@ void gameLobby::CancelHost()
     cJSON_AddStringToObject(Mesg,"Type","CancelHost");
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    if (send(Connection, JsonToSend, MAXSIZE, NULL))
+    if (send(Connection, JsonToSend, strlen(JsonToSend), NULL))
     {
         yourSide = -1;
         inRooms = false;
@@ -403,7 +404,7 @@ void gameLobby::GetOnlineUser()
     cJSON_AddStringToObject(Mesg,"Type","GetOnlineUsers");
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    if(send(Connection, JsonToSend, MAXSIZE, NULL) <= 0)
+    if(send(Connection, JsonToSend, strlen(JsonToSend), NULL) <= 0)
     {
         qDebug() << "Send message to server failed!.";
     }
@@ -438,7 +439,7 @@ bool gameLobby::backToLobby()
     cJSON_AddStringToObject(Mesg,"Type","BackToLobby");
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
         return false;
     else
@@ -473,7 +474,7 @@ bool gameLobby::sendMessage(const std::string& message, const std::string& usern
     cJSON_AddStringToObject(Mesg,"Message",message.c_str());
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
         return false;
     return true;
@@ -494,7 +495,7 @@ bool gameLobby::CreateRoom(const std::string &user)
     cJSON_AddStringToObject(Mesg,"User",user.c_str());
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
         return false;
     return true;
@@ -813,7 +814,7 @@ void gameLobby::SendRequestForJoining(int ID)
 
     char *JsonToSend = cJSON_Print(Request);   //make the json as char*
     cJSON_Delete(Request);
-    int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
+    int RetnCheck = send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     if (RetnCheck < 0)
     {
         //TO DO: failed send;
@@ -829,7 +830,7 @@ void gameLobby::exitLobby()
     cJSON_AddStringToObject(Mesg,"Type","Exit");
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
-    send(Connection, JsonToSend, MAXSIZE, NULL);
+    send(Connection, JsonToSend, strlen(JsonToSend), NULL);
     //int RetnCheck = send(Connection, JsonToSend, MAXSIZE, NULL);
     //if (RetnCheck == SOCKET_ERROR)
         //return false;
@@ -916,7 +917,7 @@ void gameLobby::EndGame(int color){
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
     qDebug() << JsonToSend;
-    if (send(Connection, JsonToSend, MAXSIZE, NULL))
+    if (send(Connection, JsonToSend, strlen(JsonToSend), NULL))
     {
 
     }
@@ -929,7 +930,7 @@ void gameLobby::I_wannaDraw(){
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
     qDebug() << JsonToSend;
-    if (send(Connection, JsonToSend, MAXSIZE, NULL))
+    if (send(Connection, JsonToSend, strlen(JsonToSend), NULL))
     {
     }
 }
@@ -944,6 +945,6 @@ void gameLobby::sendDraw(int reply){
     char *JsonToSend = cJSON_Print(Mesg);   //make the json as char*
     cJSON_Delete(Mesg);
     qDebug() << JsonToSend;
-    if(send(Connection, JsonToSend, MAXSIZE, NULL))
+    if(send(Connection, JsonToSend, strlen(JsonToSend), NULL))
         emit Draw();
 }
