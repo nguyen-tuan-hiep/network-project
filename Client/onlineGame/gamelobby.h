@@ -74,6 +74,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
+    QStringList rankingList;
     int prot = 1111;
     static void ClientThread();
     static void WaitforResponseThread();
@@ -127,7 +128,7 @@ public slots:
     void GetOnlineUser();
     void CreateAGameRoom();
     void ShowChatRoom();
-    QStringList getTopRanking();
+    void getTopRanking();
     QGraphicsProxyWidget *createRankingWidget();
     void EndGame(int);
     void I_wannaDraw();

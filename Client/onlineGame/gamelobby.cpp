@@ -159,7 +159,7 @@ gameLobby::~gameLobby()
         t2.join();
 }
 
-QStringList gameLobby::getTopRanking(){
+void gameLobby::getTopRanking(){
     cJSON * Mesg;
     Mesg = cJSON_CreateObject();
     cJSON_AddStringToObject(Mesg,"Type","GetTopRanking");
@@ -169,34 +169,15 @@ QStringList gameLobby::getTopRanking(){
     QStringList rankingList;
     if(send(Connection, JsonToSend, strlen(JsonToSend), NULL)<0){
         QMessageBox::critical(NULL,"Error", "Cannot send GetTopRanking message!");
-        return rankingList;
-    }else{
-        char buffer[MAXSIZE];
-        int RetnCheck = recv(Connection, buffer, sizeof(buffer), NULL);
-        if (RetnCheck < 0){
-            QMessageBox::critical(NULL,"Error", "Cannot recv GetTopRanking message!");
-            return rankingList;
-        }
-        cJSON *json, *json_type;
-        json = cJSON_Parse(buffer);
-        json_type = cJSON_GetObjectItem(json , "Type");
-        std::string type = json_type->valuestring;
-        if(type == "GetTopRanking"){
-            cJSON *System_Info;
-            System_Info = cJSON_GetObjectItem(json, "Response");
-            rankingList = QString::fromStdString(System_Info->valuestring).split(",");
-            cJSON_Delete(json);
-            return rankingList;
-        }
-        else{
-            QMessageBox::critical(NULL,"Error", "Recv wrong message!");
-            return rankingList;
-        }
+        return;
     }
+    QThread::msleep(1000);
+
 }
 
 QGraphicsProxyWidget *gameLobby::createRankingWidget(){
-    QStringList rankingList = getTopRanking();
+    getTopRanking();
+
     QTableWidget *tableWidget = new QTableWidget(0, 2); // 2 columns
     QStringList headers;
     headers << "User ID" << "ELO";
@@ -658,6 +639,11 @@ bool gameLobby::GetString()
         int result = json_result->valueint;
         if(result)
             emit Draw();
+        cJSON_Delete(json);
+    } else if(type == "GetTopRanking"){
+        cJSON *System_Info;
+        System_Info = cJSON_GetObjectItem(json, "Response");
+        rankingList = QString::fromStdString(System_Info->valuestring).split(",");
         cJSON_Delete(json);
     }
     return true;
