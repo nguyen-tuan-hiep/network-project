@@ -94,6 +94,10 @@ void game::register_user() {
                 QMessageBox::critical(NULL, "Error", "Missing Input\nPlease try again!");
                 return;
             }
+        if(in_txt[0].contains("#") || in_txt[0].contains(",")){
+            QMessageBox::critical(NULL, "Error", "Your ID contains forbidden character");
+            return;
+        }
         if(in_txt[2] != in_txt[3]) {
             QMessageBox::critical(NULL, "Error", "The passwords are different!");
             return;
