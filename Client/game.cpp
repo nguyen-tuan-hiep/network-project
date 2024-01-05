@@ -1023,6 +1023,7 @@ void game::playAsWhiteOnline()
     AIsSide = -1;
     playerside = 0;
     onlineGame = true;
+    currentMovePair.clear();
     gameScene->clear();
     playOffline();
     addToScene(turnDisplay);
@@ -1039,6 +1040,7 @@ void game::playAsBlackOnline()
     playerside = 1;
     onlineGame = true;
     gameScene->clear();
+    currentMovePair.clear();
     playOffline();
     addToScene(turnDisplay);
     addToScene(check);

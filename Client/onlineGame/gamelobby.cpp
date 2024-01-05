@@ -903,7 +903,6 @@ void gameLobby::ClientThread()
     //qDebug() << "Lost connection to the server.";
     if (clientptr->CloseConnection()) //Try to close socket connection..., If connection socket was closed properly
          clientptr->Signal_socketClosed();
-    //"Widgets must be created in the GUI thread.", file kernel\qwidget.cpp, line 1144
     else //If connection socket was not closed properly for some reason from our function
         clientptr->Signal_socketClosedfailed();
 }
