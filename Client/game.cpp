@@ -742,7 +742,7 @@ void game::playOffline()
 
     // Name label
     QFont titleFont("arial", 15);
-    QLabel *guestLabel = new QLabel("You're playing against: \n" + guestName);
+    QLabel *guestLabel = new QLabel("");
     guestLabel->setFont(titleFont);
 
     // history:

@@ -2,11 +2,11 @@
 
 SqlConnector::SqlConnector() {
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("sql12.freemysqlhosting.net");
-    db.setPort(3306);
-    db.setDatabaseName("sql12674676");
-    db.setUserName("sql12674676");
-    db.setPassword("3MbHcwp7GH");
+    db.setHostName("mysql-d373576-qt-chess.a.aivencloud.com");
+    db.setPort(24452);
+    db.setDatabaseName("defaultdb");
+    db.setUserName("avnadmin");
+    db.setPassword("AVNS_W3hw6cGxX-WFBdPk-Jn");
 }
 
 SqlConnector::~SqlConnector() {
